@@ -1,22 +1,16 @@
-classdef Node
-    %UNTITLED5 Summary of this class goes here
-    %   Detailed explanation goes here
-    
-    properties
-        effect
-        outputWaveForm
+classdef Node < matlab.System
+    properties 
+        Name;
+        Position;
+        %circleConnect;
+
     end
-    
     methods
-        function obj = Node(effect)
-            %Sets the effect of the node to be the given effect created
-            obj.effect = effect;
-        end
-        
-        function ApplyEffect(obj)
-            %Applies the effect of the node to the waveform
-            obj.effect.apply();
+        function  obj = Node(type,stringPos,pos,stringName,name,button,fcn)
+            annotation(type,stringPos,pos,stringName,name,button,fcn);
+            obj.Name = name;
+            obj.Position = pos;
+            %obj.circleConnect = annotation('ellipse',stringPos,[pos(1)-pos(1)/10 pos(2)+(pos(4)/2) pos(3)/4 pos(4)/4]);
         end
     end
 end
-
