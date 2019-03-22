@@ -14,39 +14,40 @@ figure('WindowButtonUpFcn',@dropObject,'units','normalized','Position',[0 0 0.4 
 
 in = newNode('In',[0.05 0.35 0.15 0.15],@selectObject);
 
-out = newNode('Out',[0.8 0.35 0.15 0.15], @selectObject);
+% out = newNode('Out',[0.8 0.35 0.15 0.15], @selectObject);
+% 
+% Flanger = newNode('Flanger',[0.3 0.8 0.15 0.15],@selectObject);
+% Lowpass = newNode('Low Pass',[0.5 0.8 0.15 0.15],@selectObject);
+% 
+% 
+% TestNode = newNode('Test Node',[0.55 0.55 0.15 0.15], @selectObject);
 
-Flanger = newNode('Flanger',[0.3 0.8 0.15 0.15],@selectObject);
-Lowpass = newNode('Low Pass',[0.5 0.8 0.15 0.15],@selectObject);
 
-
-TestNode = newNode('Test Node',[0.55 0.55 0.15 0.15], @selectObject);
-
-selectedObject = []
-    
-    %If an object is clicked on, it updates the selected object
     function selectObject(hObject,eventdata)          
-        selectedObject = findNodeFromAnnoObject(hObject);
-        if ~isempty(selectedObject)
-            selectedObject.select();
+        node = findNodeFromAnnoObject(hObject);
+        if ~isempty(node)
+            selectO = node
+            node.select();
         end
     end
-    
-    %When the mouse button is released call the drop function of the
-    %selected object and set the selectedObject to be empty
+
     function dropObject(hObject,eventdata)
-        if ~isempty(selectedObject)
-            selectedObject.drop();
-            selectedObject = [];
+        dOb = hObject
+        node = findNodeFromAnnoObject(hObject);
+        if ~isempty(node)
+            dropO = node
+            node.drop();
         end
 
     end
-    
-    %When the mouse is being moved, call drag function of the selected
-    %object
+
     function dragObject(hObject,eventdata)
-        if ~isempty(selectedObject)
-            selectedObject.drag();
+        hObject = hObject
+        node = findNodeFromAnnoObject(hObject);
+        
+        if ~isempty(node)
+            dragO = node
+            node.drag();
         end
     end
 
