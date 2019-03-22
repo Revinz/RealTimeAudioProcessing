@@ -25,14 +25,12 @@ classdef Node < Interactable
         
         function select(obj)
             selectWorking = obj.Name
-            obj.dragging = obj;
+            obj.dragging = obj.anno;
             obj.orPos = get(gcf,'CurrentPoint');
 
         end
         function drop(obj)
-            insideDrop = 'inside Drop'
             if ~isempty(obj.dragging)
-                dropWorking = obj.Name
                 newPos = get(gcf,'CurrentPoint');
                 posDiff = newPos - obj.orPos;
 
@@ -46,9 +44,7 @@ classdef Node < Interactable
         end
 
         function drag(obj)
-            insideDrag = 'inside Drag'
             if ~isempty(obj.dragging)
-                dragWorking = obj.Name
                 newPos = get(gcf,'CurrentPoint');
                 try
                     posDiff = newPos - obj.orPos;
@@ -65,10 +61,10 @@ classdef Node < Interactable
         end
         
         function updateConnectionCircles(obj)
-            obj.inConnection.Position(1) = (obj.Position(1)-0.005);
-            obj.inConnection.Position(2) = (obj.Position(2)+obj.Position(4)/2);
-            obj.outConnection.Position(1) = (obj.Position(1)+obj.Position(3)-0.005);
-            obj.outConnection.Position(2) = (obj.Position(2)+obj.Position(4)/2);
+            obj.inConnection.Position(1) = (obj.anno.Position(1)-0.005);
+            obj.inConnection.Position(2) = (obj.anno.Position(2)+obj.Position(4)/2);
+            obj.outConnection.Position(1) = (obj.anno.Position(1)+obj.Position(3)-0.005);
+            obj.outConnection.Position(2) = (obj.anno.Position(2)+obj.Position(4)/2);
         end
         
 
