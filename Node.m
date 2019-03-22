@@ -62,9 +62,9 @@ classdef Node < Interactable
         
         function updateConnectionCircles(obj)
             obj.inConnection.Position(1) = (obj.anno.Position(1)-0.005);
-            obj.inConnection.Position(2) = (obj.anno.Position(2)+obj.Position(4)/2);
-            obj.outConnection.Position(1) = (obj.anno.Position(1)+obj.Position(3)-0.005);
-            obj.outConnection.Position(2) = (obj.anno.Position(2)+obj.Position(4)/2);
+            obj.inConnection.Position(2) = (obj.anno.Position(2)+obj.anno.Position(4)/2);
+            obj.outConnection.Position(1) = (obj.anno.Position(1)+obj.anno.Position(3)-0.005);
+            obj.outConnection.Position(2) = (obj.anno.Position(2)+obj.anno.Position(4)/2);
         end
         
 
