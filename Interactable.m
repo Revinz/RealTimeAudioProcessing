@@ -1,7 +1,7 @@
 classdef (Abstract) Interactable < matlab.System
     properties 
         anno;
-
+        connectedToNext;
     end
     
     methods (Abstract)
