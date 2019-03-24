@@ -1,8 +1,8 @@
 clc; close all;
 
 %Initialize global variables
-global interactables; % The list of all interactables
-interactables = {};
+global Interactables; % The list of all interactables
+Interactables = {};
 
 GUI();
 function GUI %drag_drop
@@ -20,14 +20,16 @@ Lowpass = newNode('Low Pass',[0.5 0.8 0.15 0.15],@selectObject);
 TestNode = newNode('Test Node',[0.55 0.55 0.15 0.15], @selectObject);
 
 selectedObject = [];
-% nextObject = []; 
 
 
 %If an object is clicked on, it updates the selected object
     function selectObject(hObject,eventdata)
-        selectedObject = findNodeFromAnnoObject(hObject);        
+        selectedObject = findInteractableFromAnnoObject(hObject);        
          if ~isempty(selectedObject)
-            selectedObject.select();
+             
+             if ~isempty(selectedObject.anno)
+                selectedObject.select();
+             end
          end
     end
 
@@ -35,8 +37,12 @@ selectedObject = [];
 %selected object and set the selectedObject to be empty
     function dropObject(hObject,eventdata)
         if ~isempty(selectedObject)
-            selectedObject.drop();
-            selectedObject = []; 
+            
+            if ~isempty(selectedObject.anno)
+                    selectedObject.drop();
+                    selectedObject = []; 
+            end
+
         end             
     end
 
@@ -46,47 +52,59 @@ selectedObject = [];
 %object
     function dragObject(hObject,eventdata)
         if ~isempty(selectedObject)
-            selectedObject.drag();
+            
+            if ~isempty(selectedObject.anno)
+                selectedObject.drag();
+            end
+            
         end
     end
 
+
+end
+
+
 % Functions to create new interactable items
-    function node = newNode(name, position, select)
-        
-        node = Node('textbox','Position',position,'String',name,'ButtonDownFcn',select);
-        node.inConnection = newConnection([node.Position(1)-0.005 node.Position(2)+node.Position(4)/2 .01 .015],@selectObject); % Reference property in node class
-        node.outConnection = newConnection([node.Position(1)+node.Position(3)-0.005 node.Position(2)+node.Position(4)/2 .01 .015],@selectObject);
-        
-        global interactables %Makes the global 'interactables' referencable
-        interactables{end+1} = node; % Adds the node to the end of interactables list
-        
-        return
-    end
+function node = newNode(name, position, select)
+
+    node = Node('textbox','Position',position,'String',name,'ButtonDownFcn',select);
+    node.inSocket = newSocket('in', node, select); % Reference property in node class
+    node.outSocket = newSocket('out', node, select);
+
+    global Interactables %Makes the global 'interactables' referencable
+    Interactables{end+1} = node; % Adds the node to the end of interactables list
+
+    return
 end
 
 % Function to create the in and out connection ellipses
-function connection = newConnection(position, select)
+function socket = newSocket(type, node, select)
+    if strcmp(type,'in')
+        socket = InSocket(node, 'ellipse','Position','ButtonDownFcn',select);
+    elseif strcmp(type,'out')
+        socket = OutSocket(node, 'ellipse','Position','ButtonDownFcn',select);         
+    end
+    global Interactables %Makes the global 'interactables' referencable
+    Interactables{end+1} = socket; % Adds the node to the end of interactables list
 
-connection = Connection('ellipse','Position',position,'ButtonDownFcn',select);
-global interactables %Makes the global 'interactables' referencable
-interactables{end+1} = connection; % Adds the node to the end of interactables list
-
-return
+    return
 end
 
 %Finds the node that has the given annotation inside it
-function foundNode = findNodeFromAnnoObject(annotation)
+function interactable = findInteractableFromAnnoObject(annotation)
 
-%Find Node class by looking for the
-global interactables
-for i = 1:length(interactables)
-    if interactables{i}.anno == annotation
-        foundNode = interactables{i};
-        return
+    %Find Node class by looking for the
+    global Interactables
+    for i = 1:length(Interactables)
+        if Interactables{i}.anno == annotation
+            interactable = Interactables{i};
+            return
+        end
     end
+    interactable = [];
 end
-foundNode = [];
-end
+
+
 
 
 

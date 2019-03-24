@@ -29,19 +29,22 @@ classdef Connection < Interactable % Class for the inConnection and outConnectio
         
          % (Not yet implemented) reset line if not connected to Connection node
          function drop(obj)
-             if obj.connectedToNext == false
-                 obj.line.Position = [0 0 0 0];
-             else
-             end
+             
+            
              obj.dragging = [];
+             
              
          end
          
         function select(obj)
             obj.dragging = obj.anno;
             obj.orPos = get(gcf,'CurrentPoint');
+
+            
         end
         
+        
+                
     end
     
 end
