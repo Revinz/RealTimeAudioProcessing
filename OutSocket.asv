@@ -1,7 +1,7 @@
 classdef OutSocket < ConnectionSocket
     
     properties
-        nextNode %The node before this one that is connected to it
+        prevNode %The node before this one that is connected to it
     end
     
     methods
@@ -64,18 +64,16 @@ classdef OutSocket < ConnectionSocket
                 obj.connectionLine.Position(1) = connectToSocket.anno.Position(1) + obj.socketOffset(1);
                 obj.connectionLine.Position(2) = connectToSocket.anno.Position(2) + obj.socketOffset(2);
 
-                obj.nextNode = connectToSocket.node;
-                nextNode = obj.nextNode
+                obj.prevNode = connectToSocket.node;
             else
-                obj.disconnectLine();
+                delete(obj.connectionLine);
+                obj.connectionLine = [];
+                obj.prevNode = [];
             end
             
         end
         
         function disconnectLine(obj)
-                delete(obj.connectionLine);
-                obj.connectionLine = [];
-                obj.nextNode = [];
         end
         
 
