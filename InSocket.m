@@ -5,7 +5,9 @@ classdef InSocket < ConnectionSocket
             %reference eachother
             obj.node = Node;
             obj.node.inSocket = obj;
-            
+            obj.socket = 0; % in socket = 0
+            obj.isSocket = true; 
+
             obj.setSocketOffset();
             
             %Draw the socket at the node position then instantly update the
@@ -15,7 +17,7 @@ classdef InSocket < ConnectionSocket
         end
 
         function select(obj)
-
+            
         end
 
         function drop(obj)
@@ -24,7 +26,7 @@ classdef InSocket < ConnectionSocket
 
         function drag(obj)
             if ~isempty(obj.connectionLine)
-                obj.newConnectionLine('In');
+%                 obj.newConnectionLine('In');
                 
             else
                 %Drag the current line to change where the input needs to
@@ -32,7 +34,11 @@ classdef InSocket < ConnectionSocket
             end
         end
         
-        function connectLine(obj)
+        function connectLine(obj,firstSocket,secondSocket)
+                 
+            if (firstSocket.socket == 0 && secondSocket.socket == 1)
+                obj.newConnectionLine(firstSocket,secondSocket);
+            end
         end
         
         function disconnectLine(obj)
