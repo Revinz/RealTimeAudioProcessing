@@ -4,7 +4,7 @@ classdef FlangerNode < Node
         function applyEffect(obj, buffer)
             TESTOUT = length(buffer)
             flanger = Flanger()
-            wetBuffer = flanger.stepImpl(buffer);
+            wetBuffer = flanger(buffer);
             
             
             obj.passToNextNode(wetBuffer);

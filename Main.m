@@ -7,7 +7,7 @@ DEBUG = false;
 global Interactables; % The list of all interactables
 Interactables = {};
 global frameLength;
-frameLength = 2048;
+frameLength = 4096;
 global Fs;
 Fs = 44100;
 global inputDevice;
