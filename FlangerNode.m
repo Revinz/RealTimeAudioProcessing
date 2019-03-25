@@ -2,8 +2,7 @@ classdef FlangerNode < Node
     methods
                       
         function applyEffect(obj, buffer)
-            TESTOUT = length(buffer)
-            flanger = Flanger()
+            flanger = Flanger();
             wetBuffer = flanger(buffer);
             
             

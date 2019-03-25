@@ -33,7 +33,10 @@ Flanger = newNode('flanger','Flanger',[0.3 0.8 0.15 0.15],@selectObject);
 selectedObject = [];
 
 while true
+    
+   updateConnectionPath(input);
    input.retrieveBuffer();
+   
    drawnow();
 end
 
@@ -64,14 +67,14 @@ end
     end
 
 
-
-%When the mouse is being moved, call drag function of the selected
-%object
     function dragObject(hObject,eventdata)
         if ~isempty(selectedObject)
             
             if ~isempty(selectedObject.anno)
                 selectedObject.drag();
+
+%When the mouse is being moved, call drag function of the selected
+%object
             end
             
         end
@@ -133,6 +136,76 @@ function interactable = findInteractableFromAnnoObject(annotation)
         end
     end
     interactable = [];
+end
+
+
+%Sets all the connectionLines to be black
+function updateConnectionPath(inNode)
+
+    %Find Node class by looking for the
+    global Interactables
+    
+    %Set everything to black first
+    for i = 1:length(Interactables)
+        if isa(Interactables{i}, 'InSocket') || isa(Interactables{i}, 'OutSocket')
+            try
+                if ~isempty(Interactables{i}.connectionLine)
+                    Interactables{i}.connectionLine.Color = 'k';
+                end
+            catch
+            end
+        end
+
+    end
+    
+    %Change connection lines color in the path from in to out 
+    node = inNode;
+    connected = false;
+    try
+        
+    %check if in is connected to the output node
+    while ~isempty(node)
+        if isa(node, 'OutputNode')
+            disp('CONNECTED')
+            connected = true;
+            break;
+            
+        elseif ~isempty(node.outSocket.nextNode)
+            node = node.outSocket.nextNode;
+        
+        else
+            node = [];
+        end
+    end
+    
+    %Only change the color if the input is connected to the output node
+    if connected == false
+        return;
+    end
+   
+    % Change color of all the lines that connects from in to output
+    node = inNode;
+    while ~isempty(node)
+        disp(node)
+        
+        if isa(node, 'OutputNode')
+            return
+        end
+        
+        if ~isempty(node.outSocket.connectionLine)
+            node.outSocket.connectionLine.Color = 'r';
+            if ~isempty(node.outSocket.nextNode)
+                node = node.outSocket.nextNode;
+            else
+                node = [];
+            end
+        else
+            node = [];
+        end
+    end
+    catch
+    end
+    
 end
 
 

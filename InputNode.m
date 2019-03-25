@@ -24,7 +24,7 @@ classdef InputNode < Node
         end     
         
         function applyEffect(obj, buffer)
-            disp(['Current Node: ', obj.Name])
+            %disp(['Current Node: ', obj.Name]);
             obj.passToNextNode(buffer);
             
         end

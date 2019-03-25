@@ -21,7 +21,6 @@ classdef Node < Interactable
         end
                 
         function select(obj)
-            selectWorking = obj.Name;
             obj.orPos = get(gcf,'CurrentPoint');
         end
 
@@ -93,7 +92,6 @@ classdef Node < Interactable
         end
         
         function passToNextNode(obj, buffer)
-            drawnow();
             
             if ~isempty(obj.outSocket.nextNode)
                 try
@@ -101,6 +99,8 @@ classdef Node < Interactable
                 catch                   
                 end
             end
+            
+            drawnow();
         end           
     end
     

@@ -1,5 +1,4 @@
 clc; close all;
-delete(gcp('nocreate'))
 %Show debug options
 global DEBUG;
 DEBUG = false;
@@ -8,37 +7,37 @@ DEBUG = false;
 global Interactables; % The list of all interactables
 Interactables = {};
 global frameLength;
-frameLength = 12288;
+frameLength = 4096;
 global Fs;
-Fs = 48000;
+Fs = 44100;
 global inputDevice;
 global outputDevice;
-global getNewBuffer
-getNewBuffer = true;
+
 %Open the GUI
 GUI();
 
 function GUI %drag_drop
 global input
-global START_FNC
-global getNewBuffer;
+
 figure('WindowButtonUpFcn',@dropObject,'units','normalized','Position',[0 0 0.4 0.4],'WindowButtonMotionFcn',@dragObject); % 'WindowButtonUpFcn',@dropObject
 input = newNode('in', 'In',[0.05 0.35 0.15 0.15],@selectObject);
 
 output = newNode('out','Out',[0.8 0.35 0.15 0.15], @selectObject);
 
-%Flanger = newNode('in','Flanger',[0.3 0.8 0.15 0.15],@selectObject);
+Flanger = newNode('flanger','Flanger',[0.3 0.8 0.15 0.15],@selectObject);
 %Lowpass = newNode('in','Low Pass',[0.5 0.8 0.15 0.15],@selectObject);
 
 
 %TestNode = newNode('in','Test Node',[0.55 0.55 0.15 0.15], @selectObject);
 
 selectedObject = [];
-myCluster = parcluster('local')
-delete(myCluster.Jobs)
-parpool(2);
+
 while true
-        input.retrieveBuffer();
+   input.retrieveBuffer();
+   
+   
+   %Set all 
+   drawnow();
 end
 
 
@@ -94,6 +93,8 @@ function node = newNode(effect, name, position, select)
             node = InputNode(position,name,select)
         case 'out'
             node = OutputNode(position,name,select)
+        case 'flanger'
+            node = FlangerNode(position,name,select);
     end
     
     if ~strcmp(effect, 'in')

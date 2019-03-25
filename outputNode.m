@@ -34,8 +34,9 @@ classdef OutputNode < Node
         end
         
         function applyEffect(obj, buffer)
-            disp(['Current Node: ', obj.Name])
-            drawnow();
+            %disp(['Current Node: ', obj.Name]);
+            
+            drawnow();            
             obj.playBuffer(buffer);
             
         end
