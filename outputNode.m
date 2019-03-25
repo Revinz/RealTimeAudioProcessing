@@ -1,4 +1,4 @@
-classdef outputNode < Node
+classdef OutputNode < Node
     methods
         
         function playBuffer(obj)

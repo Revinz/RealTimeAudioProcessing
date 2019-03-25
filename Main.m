@@ -12,13 +12,13 @@ function GUI %drag_drop
 figure('WindowButtonUpFcn',@dropObject,'units','normalized','Position',[0 0 0.4 0.4],'WindowButtonMotionFcn',@dragObject); % 'WindowButtonUpFcn',@dropObject
 input = newNode('in', 'In',[0.05 0.35 0.15 0.15],@selectObject);
 
-output = newNode('in','Out',[0.8 0.35 0.15 0.15], @selectObject);
+output = newNode('out','Out',[0.8 0.35 0.15 0.15], @selectObject);
 
-Flanger = newNode('test','Flanger',[0.3 0.8 0.15 0.15],@selectObject);
-Lowpass = newNode('test','Low Pass',[0.5 0.8 0.15 0.15],@selectObject);
+%Flanger = newNode('in','Flanger',[0.3 0.8 0.15 0.15],@selectObject);
+%Lowpass = newNode('in','Low Pass',[0.5 0.8 0.15 0.15],@selectObject);
 
 
-TestNode = newNode('test','Test Node',[0.55 0.55 0.15 0.15], @selectObject);
+%TestNode = newNode('in','Test Node',[0.55 0.55 0.15 0.15], @selectObject);
 
 selectedObject = [];
 
@@ -73,11 +73,16 @@ function node = newNode(effect, name, position, select)
         case 'in'
             node = InputNode(position,name,select)
         case 'out'
-            node = Node(position,name,select);
+            node = OutputNode(position,name,select)
     end
     
-    node.inSocket = newSocket('in', node, select); % Reference property in node class
-    node.outSocket = newSocket('out', node, select);
+    if ~strcmp(effect, 'in')
+        node.inSocket = newSocket('in', node, select); % Reference property in node class
+    end
+    if ~strcmp(effect, 'out')
+        node.outSocket = newSocket('out', node, select);
+    end    
+
     
     global Interactables %Makes the global 'interactables' referencable
     Interactables{end+1} = node; % Adds the node to the end of interactables list
