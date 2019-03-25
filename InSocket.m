@@ -19,44 +19,22 @@ classdef InSocket < ConnectionSocket
         end
 
         function select(obj)
-            if isempty(obj.connectionLine)
-                obj.newConnectionLine( 'in',[obj.anno.Position(1) obj.anno.Position(2)]);
+            if ~isempty(obj.connectionLine)
+                obj.disconnectLine();
                 
             end
         end
 
         function drop(obj)
-            connectLine(obj);
         end
 
         function drag(obj)
             
-            if ~isempty(obj.connectionLine)
-                mouse = get(gcf,'CurrentPoint');
-                
-                %Update end position of the end -- where it should connect
-                %to the outSocket
-                obj.connectionLine.Position(3) = mouse(1) - obj.connectionLine.Position(1);
-                obj.connectionLine.Position(4) = mouse(2)- obj.connectionLine.Position(2);
-                
-            end
             
         end
         
         function connectLine(obj)
-            
-            connectToSocket = obj.checkForSocketInRange('OutSocket');
-            
-            if ~isempty(connectToSocket)
-                %Update end of line position to be inside the out socket                
-                obj.connectionLine.Position(3) = connectToSocket.anno.Position(1) + obj.socketOffset(1) - obj.connectionLine.Position(1);
-                obj.connectionLine.Position(4) = connectToSocket.anno.Position(2) + obj.socketOffset(2)- obj.connectionLine.Position(2);
-                obj.prevNode = connectToSocket.node;
-                preNode = obj.prevNode
-            else
-                obj.disconnectLine();
-            end
-            
+
             
         end
         
@@ -64,6 +42,7 @@ classdef InSocket < ConnectionSocket
                 delete(obj.connectionLine);
                 obj.connectionLine = [];
                 obj.prevNode = [];
+                obj.prevNode.outSocket.connectionLine = [];
         end
 
             

@@ -2,6 +2,9 @@ classdef Node < Interactable
     properties 
         Name;
         
+        dryBuffer;
+        wetBuffer;
+        
         %Connection socket variables for annotations
         inSocket;
         outSocket;
@@ -11,8 +14,8 @@ classdef Node < Interactable
         
     end
     methods
-        function  obj = Node(type,stringPos,pos,stringName,name,button,fcn)
-            obj.anno = annotation(type,stringPos,pos,stringName,name,button,fcn);
+        function  obj = Node(pos,name,fcn)
+            obj.anno = annotation('textbox','Position',pos,'String',name,'ButtonDownFcn',fcn);
             obj.Name = name;
 
         end
@@ -56,11 +59,18 @@ classdef Node < Interactable
         end
         
         function updateConnectionLines(obj) % Not working!
-            obj.inSocket.line.Position(1) = (obj.anno.Position(1)-0.005);
-            obj.inSocket.line.Position(2) = (obj.anno.Position(2)+obj.Position(4)/2);
-            obj.outSocket.line.Position(1) = (obj.anno.Position(1)+obj.Position(3)-0.005);
-            obj.outSocket.line.Position(2) = (obj.anno.Position(2)+obj.Position(4)/2);
-        end
+            %Update endPosition of previous line
+            obj.inSocket.connectionLine.Position(1) = (obj.anno.Position(1)-0.005);
+            obj.inSocket.connectionLine.Position(2) = (obj.anno.Position(2)+obj.Position(4)/2);
             
+            %Update startPosition of nextLine
+            obj.outSocket.connectionLine.Position(1) = (obj.anno.Position(1)+obj.Position(3)-0.005);
+            obj.outSocket.connectionLine.Position(2) = (obj.anno.Position(2)+obj.Position(4)/2);
+        end  
+                   
     end
+    
+     methods (Abstract)
+         applyEffect(obj, buffer);
+     end
 end

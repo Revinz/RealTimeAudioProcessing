@@ -19,11 +19,11 @@ classdef (Abstract) ConnectionSocket < Interactable
             mouse = get(gcf,'CurrentPoint');
             
             %Position(n)
-            %inSocket x = 1, in y = 3
-            %outSocket x = 2, y = 4
-            if strcmp(from, 'in')                                                                     
+            %startOfLine x = 1, in y = 3
+            %endOfLine x = 2, y = 4
+            if strcmp(from, 'out')                                                                     
                 obj.connectionLine = annotation('line',[socketPos(1)+obj.socketOffset(1) mouse(1)], [socketPos(2)+obj.socketOffset(2) mouse(2)]);
-            elseif strcmp(from, 'out') 
+            elseif strcmp(from, 'in') %Not used anymore
                 obj.connectionLine = annotation('line',[mouse(1) socketPos(1)+obj.socketOffset(1)], [mouse(2) socketPos(2)+obj.socketOffset(2)]);
             end
         end
