@@ -1,4 +1,5 @@
 clc; close all;
+delete(gcp('nocreate'))
 %Show debug options
 global DEBUG;
 DEBUG = false;
@@ -12,13 +13,15 @@ global Fs;
 Fs = 48000;
 global inputDevice;
 global outputDevice;
-
+global getNewBuffer
+getNewBuffer = true;
 %Open the GUI
 GUI();
 
 function GUI %drag_drop
 global input
-
+global START_FNC
+global getNewBuffer;
 figure('WindowButtonUpFcn',@dropObject,'units','normalized','Position',[0 0 0.4 0.4],'WindowButtonMotionFcn',@dragObject); % 'WindowButtonUpFcn',@dropObject
 input = newNode('in', 'In',[0.05 0.35 0.15 0.15],@selectObject);
 
@@ -31,10 +34,11 @@ output = newNode('out','Out',[0.8 0.35 0.15 0.15], @selectObject);
 %TestNode = newNode('in','Test Node',[0.55 0.55 0.15 0.15], @selectObject);
 
 selectedObject = [];
-
+myCluster = parcluster('local')
+delete(myCluster.Jobs)
+parpool(2);
 while true
-   input.retrieveBuffer();
-   drawnow();
+        input.retrieveBuffer();
 end
 
 

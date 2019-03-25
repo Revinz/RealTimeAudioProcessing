@@ -1,4 +1,8 @@
 classdef InputNode < Node
+    
+    properties
+        getBufferFnc = @getBuffer;
+    end
     methods
         function obj = InputNode(pos,name,fcn)
             global inputDevice;
@@ -16,12 +20,15 @@ classdef InputNode < Node
         function retrieveBuffer(obj)
             global inputDevice;
             %Get the input buffer here
-            dryBuffer = inputDevice();
-            %Pass it on
-            bufferLength = length(dryBuffer)
-            obj.applyEffect(dryBuffer);
-
             
+            result = parfeval(obj.getBufferFnc, 1);
+            while isempty(fetchNext(result))
+                drawnow();
+            end
+            dryBuffer = result;
+            %Pass it on
+            
+            obj.applyEffect(dryBuffer);
         end     
         
         function applyEffect(obj, buffer)
@@ -29,6 +36,11 @@ classdef InputNode < Node
             obj.passToNextNode(buffer);
             
         end
+    end
+    
+    methods (Static)
+        
+
     end
     
     

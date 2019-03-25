@@ -93,6 +93,8 @@ classdef Node < Interactable
         end
         
         function passToNextNode(obj, buffer)
+            drawnow();
+            
             if ~isempty(obj.outSocket.nextNode)
                 try
                     obj.outSocket.nextNode.applyEffect(buffer);

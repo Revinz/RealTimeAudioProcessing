@@ -21,9 +21,10 @@ classdef OutputNode < Node
         function playBuffer(obj, finalBuffer)
             global DEBUG;
             global outputDevice;
-            global input;
+            global input
             %Play the buffer
-            outputDevice(finalBuffer);         
+            getNewBuf
+            outputDevice(finalBuffer);
             
 
             if DEBUG == true
