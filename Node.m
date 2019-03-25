@@ -66,16 +66,28 @@ classdef Node < Interactable
         end
         
         function updateConnectionLines(obj) % Not working!
-            %Update endPosition of previous line
-            if ~isempty(obj.inSocket)      
-                obj.inSocket.connectionLine.Position(1) = (obj.anno.Position(1)-0.005);
-                obj.inSocket.connectionLine.Position(2) = (obj.anno.Position(2)+obj.Position(4)/2);
+            %Update the connectionLine from the inSocket
+            if ~isempty(obj.inSocket)
+                if ~isempty(obj.inSocket.connectionLine)
+                    % Formula: inSocket position of the node 
+                    % + socket offset
+                    % - startPos of the connection line
+                    obj.inSocket.connectionLine.Position(3) = (obj.inSocket.anno.Position(1)+obj.inSocket.socketOffset(1)-obj.inSocket.connectionLine.Position(1));
+                    obj.inSocket.connectionLine.Position(4) = (obj.inSocket.anno.Position(2)+obj.inSocket.socketOffset(2)-obj.inSocket.connectionLine.Position(2));
+                end
             end
-            
-            %Update startPosition of nextLine
+            %Update the connectionLine from the outSocket
             if ~isempty(obj.outSocket)
-                obj.outSocket.connectionLine.Position(1) = (obj.anno.Position(1)+obj.Position(3)-0.005);
-                obj.outSocket.connectionLine.Position(2) = (obj.anno.Position(2)+obj.Position(4)/2);
+                if ~isempty(obj.outSocket.connectionLine)
+                    
+                    changeInPos = [obj.outSocket.connectionLine.Position(1) obj.outSocket.connectionLine.Position(2)];
+                    obj.outSocket.connectionLine.Position(1) = (obj.outSocket.anno.Position(1)+obj.outSocket.socketOffset(1));
+                    obj.outSocket.connectionLine.Position(2) = (obj.outSocket.anno.Position(2)+obj.outSocket.socketOffset(2));
+                    changeInPos(1) = changeInPos(1) - obj.outSocket.connectionLine.Position(1);
+                    changeInPos(2) = changeInPos(2) - obj.outSocket.connectionLine.Position(2);
+                    obj.outSocket.connectionLine.Position(3) =  obj.outSocket.connectionLine.Position(3) + changeInPos(1);
+                    obj.outSocket.connectionLine.Position(4) = obj.outSocket.connectionLine.Position(4) + changeInPos(2);
+                end
             end            
 
         end  
