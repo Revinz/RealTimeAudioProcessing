@@ -15,7 +15,7 @@ classdef FlangerNode < Node
             
             
             
-            obj.outSocket.nextNode.applyEffect(wetBuffer)
+            obj.passToNextNode();
             
         end
     end

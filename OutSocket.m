@@ -20,7 +20,6 @@ classdef OutSocket < ConnectionSocket
         
         function select(obj)
             if ~isempty(obj.connectionLine)
-                test = 'test'
                 obj.disconnectLine();               
             end
         end

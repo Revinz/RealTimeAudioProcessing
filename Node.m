@@ -11,7 +11,7 @@ classdef Node < Interactable
                         
         %Variables for dragging/selecting/dropping
         orPos = []; %Original Position
-        
+                
     end
     methods
         function  obj = Node(pos,name,fcn)
@@ -90,8 +90,16 @@ classdef Node < Interactable
                 end
             end            
 
-        end  
-                   
+        end
+        
+        function passToNextNode(obj, buffer)
+            if ~isempty(obj.outSocket.nextNode)
+                try
+                    obj.outSocket.nextNode.applyEffect(buffer);
+                catch                   
+                end
+            end
+        end           
     end
     
      methods (Abstract)

@@ -1,13 +1,23 @@
 clc; close all;
+parpool
+%Show debug options
+global DEBUG;
+DEBUG = false;
 
 %Initialize global variables
 global Interactables; % The list of all interactables
 Interactables = {};
+global frameLength;
+frameLength = 12288;
+global Fs;
+Fs = 48000;
+global inputDevice;
+global outputDevice;
 
+%Open the GUI
 GUI();
 
 function GUI %drag_drop
-
 
 figure('WindowButtonUpFcn',@dropObject,'units','normalized','Position',[0 0 0.4 0.4],'WindowButtonMotionFcn',@dragObject); % 'WindowButtonUpFcn',@dropObject
 input = newNode('in', 'In',[0.05 0.35 0.15 0.15],@selectObject);
@@ -22,6 +32,10 @@ output = newNode('out','Out',[0.8 0.35 0.15 0.15], @selectObject);
 
 selectedObject = [];
 
+while true
+    input.retrieveBuffer();
+    pause(0.005); %Gives time to draw -- Way faster than drawnow()
+end 
 
 %If an object is clicked on, it updates the selected object
     function selectObject(hObject,eventdata)

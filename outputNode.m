@@ -1,19 +1,39 @@
 classdef OutputNode < Node
+    
+    properties
+        scope
+    end
+    
     methods
         
-        function playBuffer(obj)
+        function obj = OutputNode(pos,name,fcn)
+            global inputDevice;
+            obj = obj@Node(pos,name,fcn);
             
+            
+            obj.scope = dsp.TimeScope( ...        
+                'SampleRate',inputDevice.SampleRate, ... 
+                'TimeSpan',0.05, ...                      
+                'BufferLength',1.5e6, ...               
+                'YLimits',[-0.3,0.3]); 
+        end
+        
+        function playBuffer(obj, finalBuffer)
+            global DEBUG;
+            global Interactables;
+            global outputDevice;
             %Play the buffer
+            outputDevice(finalBuffer);
             
-            
-            %Pass it on
-            
+            if DEBUG == true
+                obj.scope(finalBuffer);
+            end
             
         end
         
         function applyEffect(obj, buffer)
             nodeName = obj.Name
-            obj.playBuffer(obj);
+            obj.playBuffer(buffer);
             
         end
     end

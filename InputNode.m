@@ -1,10 +1,21 @@
 classdef InputNode < Node
     methods
+        function obj = InputNode(pos,name,fcn)
+            global inputDevice;
+            global outputDevice;
+            global Fs;
+            global frameLength;
+            obj = obj@Node(pos,name,fcn); %Call parent constructor
+            inputDevice = audioDeviceReader(Fs, frameLength,'BitDepth','16-bit integer');
+            outputDevice = audioDeviceWriter( ...
+                    'SampleRate',inputDevice.SampleRate); 
+            
+        end
         
         function retrieveBuffer(obj)
-            
+            global inputDevice;
             %Get the input buffer here
-            
+            dryBuffer = inputDevice();
             
             %Pass it on
             
@@ -13,7 +24,7 @@ classdef InputNode < Node
         
         function applyEffect(obj, buffer)
             nodeName = obj.Name
-            obj.outSocket.nextNode.applyEffect(buffer)
+            obj.passToNextNode(buffer);
             
         end
     end
