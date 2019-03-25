@@ -18,7 +18,6 @@ classdef InputNode < Node
             %Get the input buffer here
             dryBuffer = inputDevice();
             %Pass it on
-            bufferLength = length(dryBuffer)
             obj.applyEffect(dryBuffer);
 
             

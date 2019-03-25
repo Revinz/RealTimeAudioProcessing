@@ -97,7 +97,7 @@ classdef Node < Interactable
             
             if ~isempty(obj.outSocket.nextNode)
                 try
-                    obj.outSocket.nextNode.applyEffect(buffer);
+                    obj.outSocket.nextNode.applyEffect(buffer)
                 catch                   
                 end
             end

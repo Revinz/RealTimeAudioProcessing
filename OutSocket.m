@@ -49,11 +49,17 @@ classdef OutSocket < ConnectionSocket
             
             if ~isempty(connectToSocket)
                 
+                %If a connection to it already exists, remove it
+                if ~isempty(connectToSocket.connectionLine)
+                    connectToSocket.prevNode.outSocket.disconnectLine();
+                end
+                
                 %Update end of line position to be inside the in socket                
                 obj.connectionLine.Position(3) = connectToSocket.anno.Position(1) + obj.socketOffset(1) - obj.connectionLine.Position(1);
                 obj.connectionLine.Position(4) = connectToSocket.anno.Position(2) + obj.socketOffset(2) - obj.connectionLine.Position(2);
                 connectToSocket.connectionLine = obj.connectionLine;
                 obj.nextNode = connectToSocket.node;
+                connectToSocket.prevNode = obj.node;
             else
                 obj.disconnectLine();
             end
@@ -63,6 +69,7 @@ classdef OutSocket < ConnectionSocket
         function disconnectLine(obj)
                 delete(obj.connectionLine);
                 obj.connectionLine = [];
+                obj.nextNode.inSocket.prevNode = [];
                 obj.nextNode = [];
                 obj.nextNode.inSocket.connectionLine = [];
         end

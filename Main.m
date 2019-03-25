@@ -7,9 +7,9 @@ DEBUG = false;
 global Interactables; % The list of all interactables
 Interactables = {};
 global frameLength;
-frameLength = 12288;
+frameLength = 2048;
 global Fs;
-Fs = 48000;
+Fs = 44100;
 global inputDevice;
 global outputDevice;
 
@@ -24,7 +24,7 @@ input = newNode('in', 'In',[0.05 0.35 0.15 0.15],@selectObject);
 
 output = newNode('out','Out',[0.8 0.35 0.15 0.15], @selectObject);
 
-%Flanger = newNode('in','Flanger',[0.3 0.8 0.15 0.15],@selectObject);
+Flanger = newNode('flanger','Flanger',[0.3 0.8 0.15 0.15],@selectObject);
 %Lowpass = newNode('in','Low Pass',[0.5 0.8 0.15 0.15],@selectObject);
 
 
@@ -90,6 +90,8 @@ function node = newNode(effect, name, position, select)
             node = InputNode(position,name,select)
         case 'out'
             node = OutputNode(position,name,select)
+        case 'flanger'
+            node = FlangerNode(position,name,select);
     end
     
     if ~strcmp(effect, 'in')
