@@ -41,7 +41,7 @@ classdef InSocket < ConnectionSocket
         function disconnectLine(obj)
                 delete(obj.connectionLine);
                 obj.connectionLine = [];
-                obj.prevNode = [];
+                obj.prevNode.outSocket.nextNode = [];
                 obj.prevNode.outSocket.connectionLine = [];
         end
 

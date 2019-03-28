@@ -1,5 +1,5 @@
 
-frameLength = 1024 * 12;
+frameLength = 1024 * 5;
 Fs = 44100;
 
 
@@ -34,11 +34,10 @@ signal = inputDevice();
 %signalFiltered = filter(filtnumd, filtdend, signal);
 
 %filter frequency
-filtHz = 300;
+filtHz = 200;
 
 
 while true
-    profile on
     signal = inputDevice(); 
     
     % real time manipulation
@@ -52,15 +51,14 @@ while true
 
 
     %signalFiltered = lowpass(signal,filtHz, Fs);
-    %signalFiltered = highpass(signal,filtHz*4, Fs);
+    signalFiltered = highpass(signal,filtHz, Fs);
     
     %Audio manipulation
-    signalFiltered = Flangerinput(signal, Fs, 1);
+    %signalFiltered = Flangerinput(signal, Fs, 1);
     %reverbSignal = reverb(signal);
     
     %Output and graph frameLength)
-    outruns = outputDevice(signalFiltered)
-    profile viewer
+    overrun = outputDevice(signalFiltered)
     scope([signalFiltered]); 
 end                                         
 

@@ -46,8 +46,10 @@ classdef OutSocket < ConnectionSocket
         function connectLine(obj)
             
             connectToSocket = obj.checkForSocketInRange('InSocket');
-                        
-            if ~isempty(connectToSocket) && ~isempty(obj.connectionLine)
+            
+            if isa
+            
+            if ~isempty(connectToSocket) && isvalid(obj.connectionLine)
                 
                 %If a connection to it already exists, remove it
 %                 if ~isempty(connectToSocket.connectionLine)

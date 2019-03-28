@@ -7,7 +7,7 @@ DEBUG = false;
 global Interactables; % The list of all interactables
 Interactables = {};
 global frameLength;
-frameMultiplier = 5;
+frameMultiplier = 2;
 frameLength = 1024 * frameMultiplier;
 global Fs;
 Fs = 44100;
@@ -27,6 +27,7 @@ output = newNode('out','Out',[0.8 0.35 0.15 0.15], @selectObject);
 
 Flanger = newNode('flanger','Flanger',[0.3 0.8 0.15 0.15],@selectObject);
 Lowpass = newNode('lowpass','Low Pass',[0.5 0.8 0.15 0.15],@selectObject);
+Highpass = newNode('highpass','High Pass',[0.4 0.6 0.15 0.15],@selectObject);
 
 
 %TestNode = newNode('in','Test Node',[0.55 0.55 0.15 0.15], @selectObject);
@@ -99,7 +100,7 @@ function node = newNode(effect, name, position, select)
         case 'lowpass'
             node = LowpassNode(position, name, select);
         case 'highpass'
-            node = LowpassNode(position, name, select);
+            node = HighpassNode(position, name, select);
     end
     
     if ~strcmp(effect, 'in')

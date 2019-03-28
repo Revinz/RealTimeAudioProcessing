@@ -23,7 +23,7 @@ classdef OutputNode < Node
             global outputDevice;
             global input;
             %Play the buffer
-            outputDevice(finalBuffer);         
+            overrun = outputDevice(finalBuffer)         
             
 
             if DEBUG == true
