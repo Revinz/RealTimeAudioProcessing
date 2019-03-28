@@ -11,7 +11,11 @@ classdef Node < Interactable
                         
         %Variables for dragging/selecting/dropping
         orPos = []; %Original Position
-                
+        
+        %All the available settings for the node
+        settings = {};
+        settingsOpened = false;
+        
     end
     methods
         function  obj = Node(pos,name,fcn)
@@ -22,6 +26,15 @@ classdef Node < Interactable
                 
         function select(obj)
             obj.orPos = get(gcf,'CurrentPoint');
+            
+            %Testing the settings:
+            if (obj.settingsOpened == false)
+                disp('Settings Opened')
+                obj.openSettings();
+            elseif (obj.settingsOpened == true)
+                disp('Settings Closed')
+                obj.closeSettings();
+            end 
         end
 
         function drop(obj)
@@ -64,7 +77,7 @@ classdef Node < Interactable
             obj.updateConnectionLines();
         end
         
-        function updateConnectionLines(obj) % Not working!
+        function updateConnectionLines(obj)
             %Update the connectionLine from the inSocket
             if ~isempty(obj.inSocket)
                 
@@ -101,10 +114,52 @@ classdef Node < Interactable
                 catch                   
                 end
             end
+        end  
+        
+        function openSettings(obj)
             
-            drawnow();
-        end           
+            %Only open settings if there are any
+            if ~(isempty(obj.settings))
+                
+                for i = length(obj.settings):-1:1 %Go in reverse order since we start from the bottom and goes up
+                    x1Pos = i * 0.2; %Just pass where the lower left corner is
+                    obj.settings{i}.draw(x1Pos)
+                end
+                
+                obj.settingsOpened = true;
+                disp(obj.settingsOpened)
+            end
+            
+            
+        end
+        
+        function closeSettings(obj)
+            if ~(isempty(obj.settings))
+                for i = length(obj.settings)
+                    obj.settings{i}.draw();
+                end
+                obj.settingsOpened = false;
+                disp(obj.settingsOpened)
+            end
+        end
+        
+        %Add a new setting
+        function setting = newSetting(obj, settingName)
+
+            switch (settingName)
+                case 'vol'
+                    setting = Setting('Volume', 1, 0, 1, 0.01, obj)
+            end
+
+            return;
+        end
+        
+        function findSetting
+        end
+        
     end
+    
+    
     
      methods (Abstract)
          applyEffect(obj, buffer);

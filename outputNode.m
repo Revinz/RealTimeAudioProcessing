@@ -2,7 +2,6 @@ classdef OutputNode < Node
     
     properties
         scope;
-        volume = 0.1; 
     end
     
     methods
@@ -11,12 +10,16 @@ classdef OutputNode < Node
             global inputDevice;
             obj = obj@Node(pos,name,fcn);
             
-            
+            %Scope to show the output
             obj.scope = dsp.TimeScope( ...        
                 'SampleRate',inputDevice.SampleRate, ... 
                 'TimeSpan',0.05, ...                      
                 'BufferLength',1.5e6, ...               
                 'YLimits',[-0.3,0.3]); 
+            
+            
+            % The settings
+            obj.settings{end + 1} = obj.newSetting('vol');
         end
         
         function playBuffer(obj, finalBuffer)
@@ -24,11 +27,12 @@ classdef OutputNode < Node
             global outputDevice;
             global input;
             %Play the buffer
-            finalBuffer = finalBuffer * obj.volume;
+            disp(obj.settings{1}.value)
+            finalBuffer = finalBuffer * obj.settings{1}.value;
             overrun = outputDevice(finalBuffer);         
-            disp(["Overrun: ", overrun]);
 
             if DEBUG == true
+                disp(["Overrun: ", overrun]);
                 obj.scope(finalBuffer);
             end
            
@@ -36,9 +40,7 @@ classdef OutputNode < Node
         end
         
         function applyEffect(obj, buffer)
-            %disp(['Current Node: ', obj.Name]);
-            
-            drawnow();            
+            %disp(['Current Node: ', obj.Name]);       
             obj.playBuffer(buffer);
             
         end
