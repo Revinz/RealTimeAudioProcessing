@@ -32,6 +32,7 @@ classdef OutSocket < ConnectionSocket
             if isempty(obj.connectionLine)
                 obj.newConnectionLine('out',[obj.anno.Position(1) obj.anno.Position(2)]);
             end
+            
             if ~isempty(obj.connectionLine)
                 mouse = get(gcf,'CurrentPoint');
                 

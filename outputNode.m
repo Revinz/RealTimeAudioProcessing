@@ -1,7 +1,8 @@
 classdef OutputNode < Node
     
     properties
-        scope
+        scope;
+        volume = 0.1; 
     end
     
     methods
@@ -23,8 +24,9 @@ classdef OutputNode < Node
             global outputDevice;
             global input;
             %Play the buffer
-            overrun = outputDevice(finalBuffer)         
-            
+            finalBuffer = finalBuffer * obj.volume;
+            overrun = outputDevice(finalBuffer);         
+            disp(["Overrun: ", overrun]);
 
             if DEBUG == true
                 obj.scope(finalBuffer);
