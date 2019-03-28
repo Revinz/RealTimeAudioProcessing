@@ -47,7 +47,7 @@ classdef OutSocket < ConnectionSocket
             
             connectToSocket = obj.checkForSocketInRange('InSocket')
             
-            if ~isempty(connectToSocket)
+            if ~isempty(connectToSocket) && isvalid(obj.connectionLine)
                 
                 %If a connection to it already exists, remove it
 %                 if ~isempty(connectToSocket.connectionLine)

@@ -79,7 +79,7 @@ classdef Node < Interactable
             end
             %Update the connectionLine from the outSocket
             if ~isempty(obj.outSocket)
-                if ~isempty(obj.outSocket.connectionLine)
+                if ~isempty(obj.outSocket.connectionLine) && isvalid(obj.outSocket.connectionLine)
                     
                     changeInPos = [obj.outSocket.connectionLine.Position(1) obj.outSocket.connectionLine.Position(2)];
                     obj.outSocket.connectionLine.Position(1) = (obj.outSocket.anno.Position(1)+obj.outSocket.socketOffset(1));

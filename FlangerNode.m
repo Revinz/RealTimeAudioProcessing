@@ -2,8 +2,8 @@ classdef FlangerNode < Node
     methods
                       
         function applyEffect(obj, buffer)
-            Flanger = flanger();
-            wetBuffer = Flanger(buffer);
+            flanger = Flanger();
+            wetBuffer = flanger(buffer);
             
             
             obj.passToNextNode(wetBuffer);
