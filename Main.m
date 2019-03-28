@@ -7,7 +7,8 @@ DEBUG = false;
 global Interactables; % The list of all interactables
 Interactables = {};
 global frameLength;
-frameLength = 4096;
+frameMultiplier = 6;
+frameLength = 1024 * frameMultiplier;
 global Fs;
 Fs = 44100;
 global inputDevice;
@@ -25,7 +26,7 @@ input = newNode('in', 'In',[0.05 0.35 0.15 0.15],@selectObject);
 output = newNode('out','Out',[0.8 0.35 0.15 0.15], @selectObject);
 
 Flanger = newNode('flanger','Flanger',[0.3 0.8 0.15 0.15],@selectObject);
-%Lowpass = newNode('in','Low Pass',[0.5 0.8 0.15 0.15],@selectObject);
+Lowpass = newNode('lowpass','Low Pass',[0.5 0.8 0.15 0.15],@selectObject);
 
 
 %TestNode = newNode('in','Test Node',[0.55 0.55 0.15 0.15], @selectObject);
@@ -95,6 +96,10 @@ function node = newNode(effect, name, position, select)
             node = OutputNode(position,name,select)
         case 'flanger'
             node = FlangerNode(position,name,select);
+        case 'lowpass'
+            node = LowpassNode(position, name, select);
+        case 'highpass'
+            node = LowpassNode(position, name, select);
     end
     
     if ~strcmp(effect, 'in')
@@ -166,7 +171,6 @@ function updateConnectionPath(inNode)
     %check if in is connected to the output node
     while ~isempty(node)
         if isa(node, 'OutputNode')
-            disp('CONNECTED')
             connected = true;
             break;
             
@@ -186,8 +190,6 @@ function updateConnectionPath(inNode)
     % Change color of all the lines that connects from in to output
     node = inNode;
     while ~isempty(node)
-        disp(node)
-        
         if isa(node, 'OutputNode')
             return
         end

@@ -67,7 +67,9 @@ classdef Node < Interactable
         function updateConnectionLines(obj) % Not working!
             %Update the connectionLine from the inSocket
             if ~isempty(obj.inSocket)
-                if ~isempty(obj.inSocket.connectionLine)
+                
+                if ~isempty(obj.inSocket.connectionLine) && isvalid(obj.inSocket.connectionLine)
+                    
                     % Formula: inSocket position of the node 
                     % + socket offset
                     % - startPos of the connection line

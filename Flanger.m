@@ -1,4 +1,4 @@
-classdef (StrictDefaults)Flanger < matlab.System & matlab.system.mixin.Propagates
+classdef (StrictDefaults)Flanger2 < matlab.System & matlab.system.mixin.Propagates
 %Flanger Add flanging effect to audio signal.
 %
 %   FLANGER = audioexample.Flanger returns an flanger System object,
