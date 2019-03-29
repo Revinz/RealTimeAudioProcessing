@@ -166,7 +166,6 @@ classdef Node < Interactable
             obj.settingsBgAnno.Position(3) = obj.anno.Position(3) + 0.06;
             obj.settingsBgAnno.Position(4) = bottomPos + 0.06;           
         end
-           
         
         function closeSettings(obj)
             
