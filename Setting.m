@@ -30,9 +30,12 @@ classdef Setting
         end
         
         function draw (obj, pos)            
-            obj.labelAnno = annotation('textbox', [obj.node.anno.Position(1) obj.node.anno.Position(2)-pos 0.1 0.05], 'String', obj.name, 'FitBoxToText', true, 'LineStyle', 'none');
-            obj.sliderAnno = uicontrol('style','slider', 'Units','Normalized','position',[obj.node.anno.Position(1) obj.node.anno.Position(2)-pos-0.05 0.15 0.05],...
+            obj.labelAnno = annotation('textbox', 'String', obj.name, 'FitBoxToText', true, 'LineStyle', 'none');
+            obj.labelAnno.Position = [obj.node.anno.Position(1) obj.node.anno.Position(2)-pos 0.1 0.05];
+            obj.sliderAnno = uicontrol('style','slider', 'Units','Normalized',...
                 'min', obj.minVal, 'max', obj.maxVal);
+            obj.sliderAnno.Position = [obj.node.anno.Position(1) obj.node.anno.Position(2)-pos-0.05 0.15 0.05];
+            
             set(obj.sliderAnno, 'value', obj.value);
             %Add listener so you can interact with the slider
             obj.listener = addlistener(obj.sliderAnno, 'Value', 'PostSet', @sliderValChange);
