@@ -34,6 +34,8 @@ classdef OutputNode < Node
             if DEBUG == true
                 disp(["Overrun: ", overrun]);
                 obj.scope(finalBuffer);
+                waveform = plot(finalBuffer);
+                set(gca, 'Units', 'Normalized', 'Position', [0.4, 0.4, 0.5, 0.5])
             end
            
             

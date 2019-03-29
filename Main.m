@@ -35,7 +35,7 @@ Highpass = newNode('highpass','High Pass',[0.4 0.6 0.15 0.15],@selectObject);
 
 %settingsTest(Highpass);
 
-
+spectrumNode = newNode('spectrum', 'Spectrum', [0.2 0.2 0.15 0.15], @selectObject)
 %TestNode = newNode('in','Test Node',[0.55 0.55 0.15 0.15], @selectObject);
 
 selectedObject = [];
@@ -107,6 +107,9 @@ function node = newNode(effect, name, position, select)
             node = LowpassNode(position, name, select);
         case 'highpass'
             node = HighpassNode(position, name, select);
+        case 'spectrum'
+            node = SpectrumNode(position, name, select);
+            
     end
     
     if ~strcmp(effect, 'in')
@@ -122,10 +125,6 @@ function node = newNode(effect, name, position, select)
 
     return
 end
-
-
-
-
 
 % Function to create the in and out connection ellipses
 function socket = newSocket(type, node, select)
@@ -153,7 +152,6 @@ function interactable = findInteractableFromAnnoObject(annotation)
     end
     interactable = [];
 end
-
 
 %Sets all the connectionLines to be black
 function updateConnectionPath(inNode)
@@ -221,29 +219,5 @@ function updateConnectionPath(inNode)
     
 end
 
-function settingsTest(node)
-
-node.anno.BackgroundColor = 'k';
-node.anno.FaceAlpha = 0.1;
-rateLabel = annotation('textbox', [0.48 0.18 0.18 0.42], 'String', '', 'FitBoxToText', true, 'BackgroundColor' , 'k', 'FaceAlpha', 0.1);
-
-rateLabel = annotation('textbox', [(0.575-0.05) 0.25 0.1 0.05], 'String', 'Rate (Hz)', 'FitBoxToText', true, 'LineStyle', 'none');
-SliderH = uicontrol('style','slider', 'Units','Normalized','position',[0.5 0.2 0.15 0.05],...
-    'min', 0, 'max', 5)
-
-wet_dry = annotation('textbox', [(0.575-0.05) 0.35 0.1 0.05], 'String', 'Wet/Dry mix', 'FitBoxToText', true, 'LineStyle', 'none');
-SliderH2 = uicontrol('style','slider', 'Units','Normalized','position',[0.5 0.3 0.15 0.05],...
-    'min', 0, 'max', 5)
-
-ms = annotation('textbox', [(0.575-0.05) 0.45 0.1 0.05], 'String', 'delay(ms)', 'FitBoxToText', true, 'LineStyle', 'none');
-SliderH3 = uicontrol('style','slider', 'Units','Normalized','position',[0.5 0.4 0.15 0.05],...
-    'min', 0, 'max', 5)
-
-feedback = annotation('textbox', [(0.575-0.05) 0.55 0.1 0.05], 'String', 'Feedback', 'FitBoxToText', true, 'LineStyle', 'none');
-SliderH4 = uicontrol('style','slider', 'Units','Normalized','position',[0.5 0.5 0.15 0.05],...
-    'min', 0, 'max', 5)
-
-
-end
 
 
