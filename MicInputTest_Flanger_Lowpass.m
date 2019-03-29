@@ -1,6 +1,6 @@
 
-frameLength = 12288;
-Fs = 48000;
+frameLength = 1024 * 5;
+Fs = 44100;
 
 
 inputDevice = audioDeviceReader(Fs, frameLength,'BitDepth','16-bit integer');
@@ -17,7 +17,7 @@ scope = dsp.TimeScope( ...
 'SampleRate',inputDevice.SampleRate, ... 
 'TimeSpan',0.05, ...                      
 'BufferLength',1.5e6, ...               
-'YLimits',[-0.3,0.3]);  
+'YLimits',[-0.1,0.1]);  
 
 %Listen to audio and playback in real-time
 bufferLatency = inputDevice.SamplesPerFrame/outputDevice.SampleRate;
@@ -34,10 +34,10 @@ signal = inputDevice();
 %signalFiltered = filter(filtnumd, filtdend, signal);
 
 %filter frequency
-filtHz = 500;
+filtHz = 200;
 
 
-while true                  
+while true
     signal = inputDevice(); 
     
     % real time manipulation
@@ -48,16 +48,18 @@ while true
 %     if (strcmp(tus,'return')) 
 %         filtHz = filtHz + 100
 %     end
-    signalFiltered = lowpass(signal,filtHz, Fs);
-      
 
+
+    %signalFiltered = lowpass(signal,filtHz, Fs);
+    %signalFiltered = highpass(signal,filtHz, Fs);
+    
     %Audio manipulation
-    %flangerSignal = Flangerinput(signal, Fs, 1);
+    signalFiltered = Flangerinput(signal, Fs, 1);
     %reverbSignal = reverb(signal);
     
-    %Output and graph
-    outputDevice(signalFiltered);
-    scope([signal,signalFiltered]); 
+    %Output and graph frameLength)
+    overrun = outputDevice(signalFiltered)
+    scope([signalFiltered]); 
 end                                         
 
 release(inputDevice)                         
@@ -69,7 +71,7 @@ function flanger = Flangerinput(Input, Fs, wetdry_ratio)
     
     delay = 24;
     range = 12;
-    sweep_freq = 0.4;
+    sweep_freq = 0.25;
     flanger = zeros(size(Input));
 
         

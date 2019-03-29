@@ -60,7 +60,7 @@ classdef (StrictDefaults)Flanger < matlab.System & matlab.system.mixin.Propagate
     %----------------------------------------------------------------------
     %   Public, tunable properties.
     %----------------------------------------------------------------------
-    properties
+    properties %Some value maxs have been changed
         %Delay Base delay
         %   Specify the base delay for flanger effect as positive scalar
         %   value in seconds. Base delay value must be in the range between
@@ -152,12 +152,12 @@ classdef (StrictDefaults)Flanger < matlab.System & matlab.system.mixin.Propagate
         end
         
         function set.Depth(obj,Depth)
-            validateattributes(Depth,{'numeric'},{'scalar','real','>=',0,'<=',50},'Flanger','Depth');
+            validateattributes(Depth,{'numeric'},{'scalar','real','>=',0,'<=',80},'Flanger','Depth');
             obj.Depth = Depth;
         end
         
         function set.Rate(obj,Rate)
-            validateattributes(Rate,{'numeric'},{'scalar','real','>=',0,'<=',0.5},'Flanger','Rate');
+            validateattributes(Rate,{'numeric'},{'scalar','real','>=',0,'<=',1},'Flanger','Rate');
             obj.Rate = Rate;
         end
         

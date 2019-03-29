@@ -32,6 +32,7 @@ classdef OutSocket < ConnectionSocket
             if isempty(obj.connectionLine)
                 obj.newConnectionLine('out',[obj.anno.Position(1) obj.anno.Position(2)]);
             end
+            
             if ~isempty(obj.connectionLine)
                 mouse = get(gcf,'CurrentPoint');
                 
@@ -45,9 +46,9 @@ classdef OutSocket < ConnectionSocket
         
         function connectLine(obj)
             
-            connectToSocket = obj.checkForSocketInRange('InSocket')
-            
-            if ~isempty(connectToSocket)
+            connectToSocket = obj.checkForSocketInRange('InSocket');
+                        
+            if ~isempty(connectToSocket) && ~isempty(obj.connectionLine)
                 
                 %If a connection to it already exists, remove it
 %                 if ~isempty(connectToSocket.connectionLine)
