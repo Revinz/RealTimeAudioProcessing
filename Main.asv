@@ -39,7 +39,7 @@ spectrumNode = newNode('spectrum', 'Spectrum', [0.2 0.2 0.15 0.15], @selectObjec
 %TestNode = newNode('in','Test Node',[0.55 0.55 0.15 0.15], @selectObject);
 
 selectedObject = [];
-holdTime = 0.5; %How long time to hold the mouse down before the hold function gets executed
+holdTime = 0.5;
 timerStarted = false;
 
 while true
@@ -51,7 +51,7 @@ while true
    %amount of time
    if (timerStarted == true)
 
-        elapsedTime = toc; %Get the elapsed time
+        elapsedTime = toc %Get the elapsed time
 
         if (elapsedTime >= holdTime)
             holdObject();
