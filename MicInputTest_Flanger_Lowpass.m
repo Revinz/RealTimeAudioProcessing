@@ -51,10 +51,10 @@ while true
 
 
     %signalFiltered = lowpass(signal,filtHz, Fs);
-    signalFiltered = highpass(signal,filtHz, Fs);
+    %signalFiltered = highpass(signal,filtHz, Fs);
     
     %Audio manipulation
-    %signalFiltered = Flangerinput(signal, Fs, 1);
+    signalFiltered = Flangerinput(signal, Fs, 1);
     %reverbSignal = reverb(signal);
     
     %Output and graph frameLength)
@@ -71,7 +71,7 @@ function flanger = Flangerinput(Input, Fs, wetdry_ratio)
     
     delay = 24;
     range = 12;
-    sweep_freq = 0.4;
+    sweep_freq = 0.25;
     flanger = zeros(size(Input));
 
         

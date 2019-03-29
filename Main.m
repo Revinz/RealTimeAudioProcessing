@@ -67,7 +67,7 @@ end
         if ~isempty(selectedObject)
             
             if ~isempty(selectedObject.anno)
-                    selectedObject.drop();
+                    selectedObject.drop(); 
                     selectedObject = []; 
             end
 

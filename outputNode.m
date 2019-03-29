@@ -19,7 +19,7 @@ classdef OutputNode < Node
             
             
             % The settings
-            obj.settings{end + 1} = obj.newSetting('vol');
+            obj.settings{end + 1} = obj.newSetting('vol', 1);
         end
         
         function playBuffer(obj, finalBuffer)
@@ -27,7 +27,7 @@ classdef OutputNode < Node
             global outputDevice;
             global input;
             %Play the buffer
-            disp(obj.settings{1}.value)
+            
             finalBuffer = finalBuffer * obj.settings{1}.value;
             overrun = outputDevice(finalBuffer);         
 
