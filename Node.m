@@ -195,7 +195,7 @@ classdef Node < Interactable
                 case 'rate'
                     setting = Setting('Rate (Hz)', default, 0, 1, 0.01, obj);
                 case 'cutoff'
-                    setting = Setting('Cutoff Frequency', default, 0, 3000, 50, obj);
+                    setting = Setting('Cutoff Frequency', default, 1, 5000, 50, obj);
                 case 'feedback'
                     setting = Setting('feedback', default, 0, 1, 0.01, obj);
                 case 'depth'
