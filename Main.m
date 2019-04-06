@@ -2,21 +2,16 @@ clc; close all;
 %Show debug options
 global DEBUG;
 DEBUG = false;
-global allSettings
-allSettings = {}
+
 %Initialize global variables
 global Interactables; % The list of all interactables
 Interactables = {};
 global frameLength;
-frameMultiplier = 2;
-frameLength = 1024 * frameMultiplier;
+frameLength = 4096;
 global Fs;
 Fs = 44100;
 global inputDevice;
 global outputDevice;
-
-global test
-test = [];
 
 %Open the GUI
 GUI();
@@ -24,61 +19,63 @@ GUI();
 function GUI %drag_drop
 global input
 
-figure('WindowButtonUpFcn',@dropObject,'units','normalized','Position',[0 0 0.4 0.4],'WindowButtonMotionFcn',@dragObject, 'ButtonDownFcn', @selectObject); % 'WindowButtonUpFcn',@dropObject
+figure('WindowButtonUpFcn',@dropObject,'units','normalized','Position',[0 0 0.4 0.4],'WindowButtonMotionFcn',@dragObject,'Button',@createNode);
 input = newNode('in', 'In',[0.05 0.35 0.15 0.15],@selectObject);
 
 output = newNode('out','Out',[0.8 0.35 0.15 0.15], @selectObject);
 
-Flanger = newNode('flanger','Flanger',[0.3 0.8 0.15 0.15],@selectObject);
-Lowpass = newNode('lowpass','Low Pass',[0.5 0.8 0.15 0.15],@selectObject);
-Highpass = newNode('highpass','High Pass',[0.4 0.6 0.15 0.15],@selectObject);
+% Flanger = newNode('flanger','Flanger',[0.3 0.8 0.15 0.15],@selectObject);
+% Lowpass = newNode('lowpass','Flanger',[0.5 0.8 0.15 0.15],@selectObject);
 
-%settingsTest(Highpass);
 
-spectrumNode = newNode('spectrum', 'Spectrum', [0.2 0.2 0.15 0.15], @selectObject)
 %TestNode = newNode('in','Test Node',[0.55 0.55 0.15 0.15], @selectObject);
 
 selectedObject = [];
-holdTime = 0.5; %How long time to hold the mouse down before the hold function gets executed
-timerStarted = false;
+% while true
+%     
+%    updateConnectionPath(input);
+%    input.retrieveBuffer();
+%    
+%    drawnow();
+% end
 
-while true
-    
-   updateConnectionPath(input);
-   input.retrieveBuffer();
-   
-   %Functionality to register when the mouse button has been held down for x
-   %amount of time
-   if (timerStarted == true)
-
-        elapsedTime = toc; %Get the elapsed time
-
-        if (elapsedTime >= holdTime)
-            holdObject();
-            timerStarted = false;            
-        end
-   end
-   
-   drawnow();
-end
-
+% Creates the selection screen
+    function createNode(hObject,eventdata)
+              mouse = get(gcf,'CurrentPoint');
+                  newSelection([mouse(1)-0.15 mouse(2) 0.1 0.1],'Flanger',@selectObject);
+                  newSelection([mouse(1)+0.05 mouse(2) 0.1 0.1],'Lowpass',@selectObject);
+                  newSelection([mouse(1)-0.15 mouse(2)-0.1 0.1 0.1],'Echo',@selectObject);
+                  newSelection([mouse(1)+0.05 mouse(2)-0.1 0.1 0.1],'Reverb',@selectObject);
+    end
 
 
 %If an object is clicked on, it updates the selected object
     function selectObject(hObject,eventdata)
-        disp(hObject)
-        if isa(hObject, 'matlab.ui.Figure')
-            disp('SELECTED')
-            tic; %Start timer
-            timerStarted = true;
-            return
-        end
-        
-        selectedObject = findInteractableFromAnnoObject(hObject);    
+        selectedObject = findInteractableFromAnnoObject(hObject);        
          if ~isempty(selectedObject)
              
              if ~isempty(selectedObject.anno)
                 selectedObject.select();
+                % Depending on which effect name is selected, the effect will be created
+                if isa(selectedObject, 'EffectSelector')
+                    selectedObject.anno.Position(3) = 0.15;
+                    selectedObject.anno.Position(4) = 0.15;
+
+                    switch selectedObject.Name
+                        case 'Flanger'
+                        Flanger = newNode('flanger','Flanger',selectedObject.anno.Position,@selectObject);
+                        case 'Lowpass'
+                        Lowpass = newNode('flanger','Lowpass',selectedObject.anno.Position,@selectObject);
+                        case 'Echo'
+                        Echo = newNode('flanger','Echo',selectedObject.anno.Position,@selectObject);
+                        case 'Reverb'
+                        Reverb = newNode('flanger','Reverb',selectedObject.anno.Position,@selectObject);
+
+                    end
+                    % Delete the effect selection textboxes using
+                    % horizontal alignment as filter
+                    delete(findall(gcf,'HorizontalAlignment','center'))
+                end
              end
          end
     end
@@ -86,34 +83,28 @@ end
 %When the mouse button is released call the drop function of the
 %selected object and set the selectedObject to be empty
     function dropObject(hObject,eventdata)
-        
-        timerStarted = false;
-        
         if ~isempty(selectedObject)
             
             if ~isempty(selectedObject.anno)
-                    selectedObject.drop(); 
+                    selectedObject.drop();
                     selectedObject = []; 
             end
 
         end             
     end
 
-    %When the mouse is being moved, call drag function of the selected
-    %object
+
     function dragObject(hObject,eventdata)
         if ~isempty(selectedObject)
             
             if ~isempty(selectedObject.anno)
                 selectedObject.drag();
+
+%When the mouse is being moved, call drag function of the selected
+%object
             end
             
         end
-    end
-
-    function heldObject()
-        disp('HELD')
-        
     end
 
 
@@ -126,18 +117,11 @@ function node = newNode(effect, name, position, select)
     node = [];
     switch effect
         case 'in'
-            node = InputNode(position,name,select)
+            node = InputNode(position,name,select);
         case 'out'
-            node = OutputNode(position,name,select)
+            node = OutputNode(position,name,select);
         case 'flanger'
             node = FlangerNode(position,name,select);
-        case 'lowpass'
-            node = LowpassNode(position, name, select);
-        case 'highpass'
-            node = HighpassNode(position, name, select);
-        case 'spectrum'
-            node = SpectrumNode(position, name, select);
-            
     end
     
     if ~strcmp(effect, 'in')
@@ -152,6 +136,12 @@ function node = newNode(effect, name, position, select)
     Interactables{end+1} = node; % Adds the node to the end of interactables list
 
     return
+end
+
+function selection = newSelection(position, name, select)
+         selection = EffectSelector(position, name,select);
+         global Interactables %Makes the global 'interactables' referencable
+        Interactables{end+1} = selection; % Adds the node to the end of interactables list
 end
 
 % Function to create the in and out connection ellipses
@@ -181,6 +171,7 @@ function interactable = findInteractableFromAnnoObject(annotation)
     interactable = [];
 end
 
+
 %Sets all the connectionLines to be black
 function updateConnectionPath(inNode)
 
@@ -208,6 +199,7 @@ function updateConnectionPath(inNode)
     %check if in is connected to the output node
     while ~isempty(node)
         if isa(node, 'OutputNode')
+            disp('CONNECTED')
             connected = true;
             break;
             
@@ -227,6 +219,8 @@ function updateConnectionPath(inNode)
     % Change color of all the lines that connects from in to output
     node = inNode;
     while ~isempty(node)
+        disp(node)
+        
         if isa(node, 'OutputNode')
             return
         end
@@ -246,6 +240,7 @@ function updateConnectionPath(inNode)
     end
     
 end
+
 
 
 
