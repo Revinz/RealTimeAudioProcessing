@@ -14,7 +14,6 @@ classdef FlangerNode < Node
         end
                       
         function applyEffect(obj, buffer)
-            global frameLength;
             flanger = Flanger();
             flanger.WetDryMix = obj.settings{1}.value;       
             flanger.Delay = (obj.settings{2}.value/1000); %from ms to seconds
@@ -22,10 +21,10 @@ classdef FlangerNode < Node
             flanger.Depth = obj.settings{4}.value;
             flanger.Rate = obj.settings{5}.value;
             
-            concBuffer = obj.contBuffer.concatBuffers(buffer); %Concatenate
-            manipulatedBuffer = flanger(concBuffer); %apply
-            wetBuffer = manipulatedBuffer(obj.contBuffer.totalBufferSize-frameLength+1:end); %Split
-            obj.contBuffer.previousBuffer = obj.contBuffer.updatePreviousBuffer(buffer); %Update prev buffer
+            concBuffer = concatBuffers(obj, buffer)
+            
+            wetBuffer = flanger(buffer);
+            
             
             obj.passToNextNode(wetBuffer);
             

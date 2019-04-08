@@ -8,7 +8,7 @@ allSettings = {}
 global Interactables; % The list of all interactables
 Interactables = {};
 global frameLength;
-frameMultiplier = 2;
+frameMultiplier = 4;
 frameLength = 1024 * frameMultiplier;
 global Fs;
 Fs = 44100;
@@ -35,7 +35,8 @@ Highpass = newNode('highpass','High Pass',[0.4 0.6 0.15 0.15],@selectObject);
 
 %settingsTest(Highpass);
 
-spectrumNode = newNode('spectrum', 'Spectrum', [0.2 0.2 0.15 0.15], @selectObject)
+spectrumNode = newNode('spectrum', 'Spectrum', [0.2 0.2 0.15 0.15], @selectObject);
+delayNode = newNode('delay', 'Delay', [0.6 0.2 0.15 0.15], @selectObject);
 %TestNode = newNode('in','Test Node',[0.55 0.55 0.15 0.15], @selectObject);
 
 selectedObject = [];
@@ -122,7 +123,7 @@ end
 
 % Functions to create new interactable items
 function node = newNode(effect, name, position, select)
-    
+    global frameLength
     node = [];
     switch effect
         case 'in'
@@ -137,6 +138,8 @@ function node = newNode(effect, name, position, select)
             node = HighpassNode(position, name, select);
         case 'spectrum'
             node = SpectrumNode(position, name, select);
+        case 'delay'
+            node = DelayNode(position, name, select);
             
     end
     
@@ -167,10 +170,9 @@ function socket = newSocket(type, node, select)
     return
 end
 
-%Finds the node that has the given annotation inside it
+%Finds the interactable sub-class by searching for the given anno
 function interactable = findInteractableFromAnnoObject(annotation)
 
-    %Find Node class by looking for the
     global Interactables
     for i = 1:length(Interactables)
         if Interactables{i}.anno == annotation

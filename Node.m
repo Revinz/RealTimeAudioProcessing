@@ -18,12 +18,16 @@ classdef Node < Interactable
         settingsOpened = false;
         settingsBgAnno;
         
+        
+        %The continuous buffer, used to prevent popcorn sounds
+        contBuffer;
     end
     methods
         function  obj = Node(pos,name,fcn)
             obj.anno = annotation('textbox','Position',pos,'String',name,'ButtonDownFcn',fcn);
             obj.Name = name;
-
+            obj.contBuffer = ContinuosBuffer();
+            
         end
                 
         function select(obj)
@@ -184,7 +188,6 @@ classdef Node < Interactable
         
         %Add a new setting
         function setting = newSetting(obj, settingName, default)
-
             switch (settingName)
                 case 'vol'
                     setting = Setting('Volume', default, 0, 1, 0.01, obj);
@@ -200,6 +203,10 @@ classdef Node < Interactable
                     setting = Setting('feedback', default, 0, 1, 0.01, obj);
                 case 'depth'
                     setting = Setting('Depth', default, 0, 80, 1, obj);
+                case 'noteDelay' %Needs a better name!
+                    setting = Setting('Delay (whole notes)', default, 0, 1, 0.25, obj);
+                case 'bpm'
+                    setting = Setting('Beats per minute', default, 50, 180, 1, obj);
             end
 
             return;

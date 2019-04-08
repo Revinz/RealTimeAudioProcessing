@@ -1,4 +1,0 @@
-
-while true
-    drawnow();
-end
