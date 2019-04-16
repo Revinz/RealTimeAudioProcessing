@@ -43,6 +43,13 @@ selectedObject = [];
 holdTime = 0.5; %How long time to hold the mouse down before the hold function gets executed
 timerStarted = false;
 
+%Arduino
+clear a;
+global a; %Want to be able to access the arduino properties from anywhere
+a = ArduinoPID();
+
+a.turnOnLED();
+
 while true
     
    updateConnectionPath(input);
@@ -59,7 +66,7 @@ while true
             timerStarted = false;            
         end
    end
-   
+   a.loop(); %Seems like the Arduino runs in parallel
    drawnow();
 end
 
