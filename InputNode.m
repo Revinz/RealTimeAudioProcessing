@@ -28,6 +28,12 @@ classdef InputNode < Node
             obj.passToNextNode(buffer);
             
         end
+        
+        function drag(obj)
+        end
+        
+        function drop(obj)
+        end
     end
     
     

@@ -1,4 +1,8 @@
-classdef SpectrumNode < Node       
+classdef SpectrumNode < Node   
+    
+    properties
+        wavePlot;
+    end
     methods
         
         function obj = SpectrumNode(pos,name,fcn)
@@ -16,31 +20,66 @@ classdef SpectrumNode < Node
             % for the switch statement and default value. Change the min,
             % max and sliderStep values in the newSetting() function inside
             % Node.m          
-         
         end
         
         function drag(obj)
             drag@Node(obj);
             
-            % Update the position variables of the spectrum window here
-        end
+       
                       
-        function applyEffect(obj, buffer)
-            % Plot the buffer
-            plot(buffer);
-            
             % Set the position of the buffer -- It is x, y and then the
             % width and height
             % Insert variables in the []
             % Also add scaling the min/max values to be shown in the window
             % Lastly, limit the plot's x-length to be the same as the
             % buffer's length
-            set(gca, 'Units', 'Normalized', 'Position', [0.4, 0.4, 0.5, 0.5])
+           
+            
+            %ylim([-x x])
+            %xlim([0 buffer])
+            if ~isempty(obj.wavePlot)
+                ylim([-0.8 0.8])
+                disp(obj.wavePlot.Parent)
+                obj.wavePlot.Parent.Position = [obj.anno.Position(1), obj.anno.Position(2), 0.2, 0.1];
+            end
+            
+            % Update the position variables of the spectrum window here
+        end
+         
+       
+       
+        
+        function applyEffect(obj, buffer)
+            % Plot the buffer
+            obj.wavePlot = plot(buffer);
+            
+       
+                      
+            % Set the position of the buffer -- It is x, y and then the
+            % width and height
+            % Insert variables in the []
+            % Also add scaling the min/max values to be shown in the window
+            % Lastly, limit the plot's x-length to be the same as the
+            % buffer's length
+           
+            ylim([-0.8 0.8])
+            %ylim([-x x])
+            %xlim([0 buffer])
+            
+                set(gca, 'Units', 'Normalized', 'Position', [obj.anno.Position(1), obj.anno.Position(2), 0.2, 0.1])
             
             
             % Pass the buffer to the next node
             obj.passToNextNode(buffer);
             
         end
+        
+      
+       function hideSpectrum(obj)
+            %Delete the annotations for the setting
+            delete(obj.wavePlot);
+            %setting.sliderAnno.Visible = 'off';
+       end
+        
     end
 end

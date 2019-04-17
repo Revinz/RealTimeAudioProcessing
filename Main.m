@@ -25,9 +25,9 @@ function GUI %drag_drop
 global input
 
 figure('WindowButtonUpFcn',@dropObject,'units','normalized','Position',[0 0 0.4 0.4],'WindowButtonMotionFcn',@dragObject, 'ButtonDownFcn', @selectObject); % 'WindowButtonUpFcn',@dropObject
-input = newNode('in', 'In',[0.05 0.35 0.15 0.15],@selectObject);
+input = newNode('in', 'In',[0 0.50 0.15 0.15],@selectObject);
 
-output = newNode('out','Out',[0.8 0.35 0.15 0.15], @selectObject);
+output = newNode('out','Out',[0.85 0.50 0.15 0.15], @selectObject);
 
 Flanger = newNode('flanger','Flanger',[0.3 0.8 0.15 0.15],@selectObject);
 Lowpass = newNode('lowpass','Low Pass',[0.5 0.8 0.15 0.15],@selectObject);

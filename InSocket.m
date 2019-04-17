@@ -43,6 +43,12 @@ classdef InSocket < ConnectionSocket
                 obj.connectionLine = [];
                 obj.prevNode.outSocket.nextNode = [];
                 obj.prevNode.outSocket.connectionLine = [];
+               
+                
+                if isa(obj.node, 'SpectrumNode')
+                    delete(obj.node.wavePlot.Parent);
+                    obj.node.wavePlot = [];
+                end
         end
 
             
