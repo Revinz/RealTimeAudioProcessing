@@ -103,9 +103,8 @@ nodeObject = [];
                 % parameters
                 delete(findall(gcf,'LineStyle','none'))
                 delete(findall(gcf,'LineWidth',0.6))
-                for i = 1:4
-                    Interactables(end) = [];
-                end          
+                [Interactables(end); Interactables(end-1); Interactables(end-2); Interactables(end-3)] = [];
+                
             end
         end
         
@@ -114,9 +113,7 @@ nodeObject = [];
             button.resetDefault();
             object.anno.Position(3) = 0.15;
             object.anno.Position(4) = 0.15;
-                for i = 1:4
-                    Interactables(end) = [];
-                end    
+            
             switch object.Name
                 case 'Flanger'
                     Flanger = newNode('flanger','Flanger',object.anno.Position,@selectObject);
