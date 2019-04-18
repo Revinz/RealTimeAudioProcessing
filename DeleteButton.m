@@ -10,7 +10,7 @@ classdef DeleteButton < Interactable
         function removeNode(obj,node)
             delete(obj.anno);
             global Interactables
-                if isa(node, 'FlangerNode') || isa(node, 'LowpassNode') || isa(node, 'HighpassNode')
+                if isa(node, 'FlangerNode') || isa(node, 'LowpassNode') || isa(node, 'HighpassNode') || isa(node, 'SpectrumNode') || isa(node, 'DelayNode')
                     delete(node.anno);
                     for i = 1:length(Interactables)
                         try
