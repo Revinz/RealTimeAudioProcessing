@@ -2,8 +2,8 @@ clc; close all;
 %Show debug options
 global DEBUG;
 DEBUG = false;
-global allSettings
-allSettings = {}
+global allSettings;
+allSettings = {};
 %Initialize global variables
 global Interactables; % The list of all interactables
 Interactables = {};
@@ -23,8 +23,12 @@ GUI();
 
 function GUI %drag_drop
 global input
+loadingBar = waitbar(0,'Loading Figure'); %Loading bar
+pause(0.5);
+screen = figure('WindowButtonUpFcn',@dropObject,'units','normalized','Position',[0 0 0.4 0.4],'WindowButtonMotionFcn',@dragObject, 'ButtonDownFcn', @selectObject, 'visible', 'off'); % 'WindowButtonUpFcn',@dropObject
 
-figure('WindowButtonUpFcn',@dropObject,'units','normalized','Position',[0 0 0.4 0.4],'WindowButtonMotionFcn',@dragObject, 'ButtonDownFcn', @selectObject); % 'WindowButtonUpFcn',@dropObject
+loadingBar = waitbar(0.2,loadingBar, 'Loading Elements'); %Loading bar
+pause(0.5);
 input = newNode('in', 'In',[0.05 0.35 0.15 0.15],@selectObject);
 
 output = newNode('out','Out',[0.8 0.35 0.15 0.15], @selectObject);
@@ -37,7 +41,8 @@ Highpass = newNode('highpass','High Pass',[0.4 0.6 0.15 0.15],@selectObject);
 
 spectrumNode = newNode('spectrum', 'Spectrum', [0.2 0.2 0.15 0.15], @selectObject);
 delayNode = newNode('delay', 'Delay', [0.6 0.2 0.15 0.15], @selectObject);
-%TestNode = newNode('in','Test Node',[0.55 0.55 0.15 0.15], @selectObject);
+reverbNode = newNode('reverb', 'Reverb', [0.5 0.3 0.15 0.15], @selectObject);
+
 
 selectedObject = [];
 holdTime = 0.5; %How long time to hold the mouse down before the hold function gets executed
@@ -46,9 +51,12 @@ timerStarted = false;
 %Arduino
 clear a;
 global a; %Want to be able to access the arduino properties from anywhere
+loadingBar = waitbar(0.5,loadingBar,'Connecting to Arduino');
 a = ArduinoPID();
 
-a.turnOnLED();
+%Show the screen and close the loading bar
+set( screen, 'Visible', 'on' );
+close(loadingBar);
 
 while true
     
@@ -66,7 +74,11 @@ while true
             timerStarted = false;            
         end
    end
-   a.loop(); %Seems like the Arduino runs in parallel
+   
+   if ~isempty(a.arduino)
+    a.loop(); %Seems like the Arduino runs in parallel
+   end
+   
    drawnow();
 end
 
@@ -147,7 +159,8 @@ function node = newNode(effect, name, position, select)
             node = SpectrumNode(position, name, select);
         case 'delay'
             node = DelayNode(position, name, select);
-            
+        case 'reverb'
+            node = ReverbNode(position, name, select);            
     end
     
     if ~strcmp(effect, 'in')

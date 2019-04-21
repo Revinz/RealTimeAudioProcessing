@@ -21,11 +21,14 @@ classdef ArduinoPID
     
     methods
         function obj = ArduinoPID()
+            try
             obj.arduino = arduino('COM3', 'uno'); %CHANGE COM NUMBER! You can find it in the device manager
             disp('Arduino connected');
-            
             %Setup pins
             obj.arduino.configurePin(obj.ledPin, 'DigitalOutput');
+            catch
+                disp('Arduino NOT connected');
+            end
         end
         
         
