@@ -54,9 +54,21 @@ global a; %Want to be able to access the arduino properties from anywhere
 loadingBar = waitbar(0.5,loadingBar,'Connecting to Arduino');
 a = ArduinoPID();
 
+
+
+loadingBar = waitbar(1,loadingBar,'Done!');
+pause(0.5);
 %Show the screen and close the loading bar
 set( screen, 'Visible', 'on' );
 close(loadingBar);
+
+%Pop-up if failing to establish a connection to the arduino
+if isempty(a.arduino)
+    waitfor(warndlg('Could not connect to Arduino','Warning')); %Waitfor is used to pause the program until the "close" button is hit
+end
+
+%Show instructionss
+helpdlg('INSTRUCTIONS:','Instructions');
 
 while true
     
@@ -146,9 +158,9 @@ function node = newNode(effect, name, position, select)
     node = [];
     switch effect
         case 'in'
-            node = InputNode(position,name,select)
+            node = InputNode(position,name,select);
         case 'out'
-            node = OutputNode(position,name,select)
+            node = OutputNode(position,name,select);
         case 'flanger'
             node = FlangerNode(position,name,select);
         case 'lowpass'
