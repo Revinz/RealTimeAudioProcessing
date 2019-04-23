@@ -1,7 +1,7 @@
 classdef Node < Interactable
     properties 
         Name;
-        
+        timerStarted = false;
         dryBuffer;
         wetBuffer;
         
@@ -28,6 +28,7 @@ classdef Node < Interactable
                 
         function select(obj)
             obj.orPos = get(gcf,'CurrentPoint');
+            obj.timerStarted = true;
             
         end
 

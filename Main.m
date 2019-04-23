@@ -29,18 +29,19 @@ input = newNode('in', 'In',[0.05 0.35 0.15 0.15],@selectObject);
 
 output = newNode('out','Out',[0.8 0.35 0.15 0.15], @selectObject);
 
-Flanger = newNode('flanger','Flanger',[0.3 0.8 0.15 0.15],@selectObject);
-Lowpass = newNode('lowpass','Low Pass',[0.5 0.8 0.15 0.15],@selectObject);
-Highpass = newNode('highpass','High Pass',[0.4 0.6 0.15 0.15],@selectObject);
+% Flanger = newNode('flanger','Flanger',[0.3 0.8 0.15 0.15],@selectObject);
+% Lowpass = newNode('lowpass','Low Pass',[0.5 0.8 0.15 0.15],@selectObject);
+% Highpass = newNode('highpass','High Pass',[0.4 0.6 0.15 0.15],@selectObject);
 
 %settingsTest(Highpass);
 
-spectrumNode = newNode('spectrum', 'Spectrum', [0.2 0.2 0.15 0.15], @selectObject)
+% spectrumNode = newNode('spectrum', 'Spectrum', [0.2 0.2 0.15 0.15], @selectObject)
 %TestNode = newNode('in','Test Node',[0.55 0.55 0.15 0.15], @selectObject);
 
 selectedObject = [];
 holdTime = 0.5; %How long time to hold the mouse down before the hold function gets executed
 timerStarted = false;
+nothingSelected = false;
 
 while true
     
@@ -54,8 +55,16 @@ while true
         elapsedTime = toc; %Get the elapsed time
 
         if (elapsedTime >= holdTime)
-            holdObject();
-            timerStarted = false;            
+            if (nothingSelected)
+                mouse = get(gcf, 'CurrentPoint');
+                newSelection([mouse(1)-0.15 mouse(2) 0.1 0.1],'Flanger',@selectObject);
+                newSelection([mouse(1)+0.05 mouse(2) 0.1 0.1],'Low Pass',@selectObject);
+                newSelection([mouse(1)-0.15 mouse(2)-0.1 0.1 0.1],'Spectrum',@selectObject);
+                newSelection([mouse(1)+0.05 mouse(2)-0.1 0.1 0.1],'Reverb',@selectObject);
+                disp('AHOYYY')
+                timerStarted = false;
+                nothingSelected = false;
+            end
         end
    end
    
@@ -68,6 +77,7 @@ end
     function selectObject(hObject,eventdata)
         disp(hObject)
         if isa(hObject, 'matlab.ui.Figure')
+            nothingSelected = true;
             disp('SELECTED')
             tic; %Start timer
             timerStarted = true;
@@ -79,6 +89,25 @@ end
              
              if ~isempty(selectedObject.anno)
                 selectedObject.select();
+                if isa(selectedObject, 'EffectSelector')
+                    selectedObject.anno.Position(3) = 0.15;
+                    selectedObject.anno.Position(4) = 0.15;
+                    
+                    switch selectedObject.Name
+                        case 'Flanger'
+                            Flanger = newNode('flanger','Flanger',selectedObject.anno.Position,@selectObject);
+                        case 'Low Pass'
+                            Lowpass = newNode('lowpass','Low Pass',selectedObject.anno.Position,@selectObject);
+                        case 'Spectrum'
+                            Echo = newNode('spectrum','Spectrum',selectedObject.anno.Position,@selectObject);
+                        case 'Reverb'
+                            Reverb = newNode('flanger','Reverb',selectedObject.anno.Position,@selectObject);
+                            
+                    end
+                    % Delete the effect selection textboxes using
+                    % horizontal alignment as filter
+                    delete(findall(gcf,'HorizontalAlignment','center'))
+                end
              end
          end
     end
@@ -99,20 +128,22 @@ end
         end             
     end
 
+
     %When the mouse is being moved, call drag function of the selected
     %object
     function dragObject(hObject,eventdata)
         if ~isempty(selectedObject)
-            
             if ~isempty(selectedObject.anno)
                 selectedObject.drag();
             end
             
         end
+         
     end
 
-    function heldObject()
-        disp('HELD')
+    function heldObject(mouse)
+        
+        
         
     end
 
@@ -154,6 +185,11 @@ function node = newNode(effect, name, position, select)
     return
 end
 
+function selection = newSelection(position, name, select)
+         selection = EffectSelector(position, name,select);
+         global Interactables %Makes the global 'interactables' referencable
+        Interactables{end+1} = selection; % Adds the node to the end of interactables list
+end
 % Function to create the in and out connection ellipses
 function socket = newSocket(type, node, select)
     if strcmp(type,'in')
