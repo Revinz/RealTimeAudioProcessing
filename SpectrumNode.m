@@ -33,7 +33,7 @@ classdef SpectrumNode < Node
               if ~isempty(obj.wavePlot)
                 ylim([-obj.settings{1}.value obj.settings{1}.value])
                 disp(obj.wavePlot.Parent)
-                obj.wavePlot.Parent.Position = [obj.anno.Position(1), obj.anno.Position(2), 0.2, 0.1];
+                obj.wavePlot.Parent.Position = [obj.anno.Position(1) - 0.025 , obj.anno.Position(2) + 0.2, 0.2, 0.1];
             end
             
             % Update the position variables of the spectrum window here
@@ -44,9 +44,13 @@ classdef SpectrumNode < Node
             obj.wavePlot = plot(buffer);
                                              
             ylim([-obj.settings{1}.value obj.settings{1}.value]) % this needs to be interchangeable by the user
-           
             
-                set(gca, 'Units', 'Normalized', 'Position', [obj.anno.Position(1), obj.anno.Position(2), 0.2, 0.1])
+            global frameLength;
+            xlim([0 frameLength]);
+           
+            obj.wavePlot.Parent.Position = [obj.anno.Position(1) - 0.025, obj.anno.Position(2) + 0.2, 0.2, 0.1];
+            
+%                 set(gca, 'Units', 'Normalized', obj.anno.Position(1), [obj.anno.Position(1), obj.anno.Position(2), 0.2, 0.1])
             
             
             % Pass the buffer to the next node

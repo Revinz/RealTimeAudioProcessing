@@ -22,23 +22,18 @@ classdef SpectrumNode < Node
             % Node.m   
             
             % The settings
+           
             
-            obj.settings{end+1} = Setting('Amplitude', , -1, 1, 1, obj);
+            obj.settings{end+1} = Setting('Amplitude',1 , 0.01, 1, 1, obj);
         end
         
         function drag(obj)
             drag@Node(obj);
-                                 
-            % Set the position of the buffer -- It is x, y and then the
-            % width and height
-            % Insert variables in the []
-            % Also add scaling the min/max values to be shown in the window
-            % Lastly, limit the plot's x-length to be the same as the
-            % buffer's length
+              
               if ~isempty(obj.wavePlot)
                 ylim([-obj.settings{1}.value obj.settings{1}.value])
                 disp(obj.wavePlot.Parent)
-                obj.wavePlot.Parent.Position = [obj.anno.Position(1), obj.anno.Position(2), 0.2, 0.1];
+                obj.wavePlot.Parent.Position = [obj.anno.Position(1) - 0. , obj.anno.Position(2), 0.2, 0.1];
             end
             
             % Update the position variables of the spectrum window here
@@ -47,13 +42,12 @@ classdef SpectrumNode < Node
             function applyEffect(obj, buffer)
             % Plot the buffer
             obj.wavePlot = plot(buffer);
-                              
-              
-                     
+                                             
             ylim([-obj.settings{1}.value obj.settings{1}.value]) % this needs to be interchangeable by the user
            
+            obj.wavePlot.Parent.Position = [obj.anno.Position(1) + 0.010, obj.anno.Position(2), 0.2, 0.1];
             
-                set(gca, 'Units', 'Normalized', 'Position', [obj.anno.Position(1), obj.anno.Position(2), 0.2, 0.1])
+%                 set(gca, 'Units', 'Normalized', obj.anno.Position(1), [obj.anno.Position(1), obj.anno.Position(2), 0.2, 0.1])
             
             
             % Pass the buffer to the next node
