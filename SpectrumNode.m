@@ -19,7 +19,11 @@ classdef SpectrumNode < Node
             % ONLY change the setting name 'wetdry' to the correct setting
             % for the switch statement and default value. Change the min,
             % max and sliderStep values in the newSetting() function inside
-            % Node.m          
+            % Node.m   
+            
+            % The settings
+            
+            obj.settings{end+1} = obj.newSetting('Amplitude', 0, -1, 1, 1);
         end
         
         function drag(obj)
@@ -53,6 +57,8 @@ classdef SpectrumNode < Node
             % Plot the buffer
             obj.wavePlot = plot(buffer);
             
+            
+            
        
                       
             % Set the position of the buffer -- It is x, y and then the
@@ -62,9 +68,8 @@ classdef SpectrumNode < Node
             % Lastly, limit the plot's x-length to be the same as the
             % buffer's length
            
-            ylim([-0.8 0.8])
-            %ylim([-x x])
-            %xlim([0 buffer])
+            ylim([-0.8 0.8]) % this needs to be interchangeable by the user
+           
             
                 set(gca, 'Units', 'Normalized', 'Position', [obj.anno.Position(1), obj.anno.Position(2), 0.2, 0.1])
             
