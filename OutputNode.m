@@ -8,7 +8,8 @@ classdef OutputNode < Node
         
         function obj = OutputNode(pos,name,fcn)
             global inputDevice;
-            obj = obj@Node(pos,name,fcn);
+            obj = obj@Node(pos,name,fcn);     
+            
             
             %Scope to show the output
             obj.scope = dsp.TimeScope( ...        
@@ -46,5 +47,13 @@ classdef OutputNode < Node
             obj.playBuffer(buffer);
             
         end
+        
+        function drag(obj)
+        end
+        
+               
+        function drop(obj)
+        end
+        
     end
 end

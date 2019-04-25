@@ -73,6 +73,12 @@ classdef OutSocket < ConnectionSocket
         function disconnectLine(obj)
                 delete(obj.connectionLine);
                 obj.connectionLine = [];
+                
+                
+                if isa(obj.nextNode, 'SpectrumNode')
+                    obj.nextNode.hideSpectrum();
+                end
+                
                 obj.nextNode = [];
                 obj.nextNode.inSocket.connectionLine = [];
         end

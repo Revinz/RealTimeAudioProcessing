@@ -184,6 +184,8 @@ classdef Node < Interactable
             end
             
             delete(obj.settingsBgAnno)
+            
+      
         end
         
         %Add a new setting

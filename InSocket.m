@@ -43,6 +43,11 @@ classdef InSocket < ConnectionSocket
                 obj.connectionLine = [];
                 obj.prevNode.outSocket.nextNode = [];
                 obj.prevNode.outSocket.connectionLine = [];
+               
+                
+                if isa(obj.node, 'SpectrumNode')
+                    obj.node.hideSpectrum();
+                end
         end
 
             

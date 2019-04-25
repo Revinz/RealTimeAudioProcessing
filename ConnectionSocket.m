@@ -46,11 +46,13 @@ classdef (Abstract) ConnectionSocket < Interactable
             
             return
         end
+        
     end            
 
     
     methods (Abstract)
         connectLine(obj);
         disconnectLine(obj);
+        
     end
 end
