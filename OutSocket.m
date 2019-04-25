@@ -51,9 +51,9 @@ classdef OutSocket < ConnectionSocket
             if ~isempty(connectToSocket) && ~isempty(obj.connectionLine)
                 
                 %If a connection to it already exists, remove it
-%                 if ~isempty(connectToSocket.connectionLine)
-%                     connectToSocket.prevNode.outSocket.disconnectLine();
-%                 end
+                 if ~isempty(connectToSocket.connectionLine)
+                     connectToSocket.prevNode.outSocket.disconnectLine();
+                 end
                 
                 %Update end of line position to be inside the in socket                
                 obj.connectionLine.Position(3) = connectToSocket.anno.Position(1) + obj.socketOffset(1) - obj.connectionLine.Position(1);
