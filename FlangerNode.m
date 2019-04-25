@@ -20,7 +20,6 @@ classdef FlangerNode < Node
             flanger.FeedbackLevel = obj.settings{3}.value;
             flanger.Depth = obj.settings{4}.value;
             flanger.Rate = obj.settings{5}.value;
-            disp(flanger);
             wetBuffer = flanger(buffer);
             
             

@@ -2,13 +2,14 @@ classdef SpectrumNode < Node
     
     properties
         wavePlot;
+        plotAxes;
     end
     methods
         
         function obj = SpectrumNode(pos,name,fcn)
             obj = obj@Node(pos,name,fcn);
             
-            
+            obj.checkForExistingAxes();
             % The settings -- Add the settings for this node below here
             % Check Node.m line 186 newSetting() to see if the settings already exist, if not,
             % add them in the that function like the rest
@@ -28,12 +29,13 @@ classdef SpectrumNode < Node
         end
         
         function drag(obj)
-            drag@Node(obj);
-              
-              if ~isempty(obj.wavePlot)
-                ylim([-obj.settings{1}.value obj.settings{1}.value])
+            drag@Node(obj); 
+            
+            
+            if ~isempty(obj.wavePlot)
+                ylim(obj.plotAxes, [-obj.settings{1}.value obj.settings{1}.value])
                 disp(obj.wavePlot.Parent)
-                obj.wavePlot.Parent.Position = [obj.anno.Position(1) - 0.025 , obj.anno.Position(2) + 0.2, 0.2, 0.1];
+                obj.plotAxes.Position = [obj.anno.Position(1) - 0.025 , obj.anno.Position(2) + 0.2, 0.2, 0.1];
             end
             
             % Update the position variables of the spectrum window here
@@ -41,14 +43,15 @@ classdef SpectrumNode < Node
          
             function applyEffect(obj, buffer)
             % Plot the buffer
-            obj.wavePlot = plot(buffer);
-                                             
-            ylim([-obj.settings{1}.value obj.settings{1}.value]) % this needs to be interchangeable by the user
+            
+            obj.wavePlot = plot(obj.plotAxes, buffer);  
+            obj.showSpectrum();
+            ylim(obj.plotAxes, [-obj.settings{1}.value obj.settings{1}.value]) % this needs to be interchangeable by the user
             
             global frameLength;
             xlim([0 frameLength]);
            
-            obj.wavePlot.Parent.Position = [obj.anno.Position(1) - 0.025, obj.anno.Position(2) + 0.2, 0.2, 0.1];
+            obj.plotAxes.Position = [obj.anno.Position(1) - 0.025, obj.anno.Position(2) + 0.2, 0.2, 0.1];
             
 %                 set(gca, 'Units', 'Normalized', obj.anno.Position(1), [obj.anno.Position(1), obj.anno.Position(2), 0.2, 0.1])
             
@@ -61,9 +64,21 @@ classdef SpectrumNode < Node
       
        function hideSpectrum(obj)
             %Delete the annotations for the setting
-            delete(obj.wavePlot);
+            obj.plotAxes.Visible = 'off'; %Hides the plot axes
+            obj.wavePlot.Visible = 'off'; %Hides the line
+            %delete(obj.wavePlot);
             %setting.sliderAnno.Visible = 'off';
        end
-        
+       
+       function showSpectrum(obj)
+           obj.plotAxes.Visible = 'on';
+           obj.wavePlot.Visible = 'on';
+       end
+       
+       function checkForExistingAxes(obj)
+           if isempty(obj.plotAxes)
+                obj.plotAxes = axes('Visible', 'off');
+           end
+       end
     end
 end

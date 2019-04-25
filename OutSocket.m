@@ -76,8 +76,7 @@ classdef OutSocket < ConnectionSocket
                 
                 
                 if isa(obj.nextNode, 'SpectrumNode')
-                    delete(obj.nextNode.wavePlot.Parent);
-                    obj.nextNode.wavePlot = [];
+                    obj.nextNode.hideSpectrum();
                 end
                 
                 obj.nextNode = [];

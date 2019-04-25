@@ -46,8 +46,7 @@ classdef InSocket < ConnectionSocket
                
                 
                 if isa(obj.node, 'SpectrumNode')
-                    delete(obj.node.wavePlot.Parent);
-                    obj.node.wavePlot = [];
+                    obj.node.hideSpectrum();
                 end
         end
 

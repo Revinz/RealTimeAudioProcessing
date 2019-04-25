@@ -36,6 +36,7 @@ Highpass = newNode('highpass','High Pass',[0.4 0.6 0.15 0.15],@selectObject);
 %settingsTest(Highpass);
 
 spectrumNode = newNode('spectrum', 'Spectrum', [0.2 0.2 0.15 0.15], @selectObject)
+spectrumNode2 = newNode('spectrum', 'Spectrum2', [0.2 0.2 0.15 0.15], @selectObject)
 %TestNode = newNode('in','Test Node',[0.55 0.55 0.15 0.15], @selectObject);
 
 selectedObject = [];
