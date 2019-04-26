@@ -52,6 +52,9 @@ classdef OutSocket < ConnectionSocket
                 
                 %If a connection to it already exists, remove it
                  if ~isempty(connectToSocket.connectionLine)
+                     disp(connectToSocket.node.inSocket)
+                     disp('Connection Line Exists -- Delete it')
+                                   
                      connectToSocket.prevNode.outSocket.disconnectLine();
                  end
                 
@@ -71,16 +74,17 @@ classdef OutSocket < ConnectionSocket
         end
         
         function disconnectLine(obj)
+                disp('DISCONNECT')
                 delete(obj.connectionLine);
-                obj.connectionLine = [];
-                
+                obj.connectionLine = [];   
                 
                 if isa(obj.nextNode, 'SpectrumNode')
                     obj.nextNode.hideSpectrum();
                 end
                 
-                obj.nextNode = [];
+                
                 obj.nextNode.inSocket.connectionLine = [];
+                obj.nextNode = [];
         end
         
 

@@ -16,9 +16,9 @@ classdef InputNode < Node
         function retrieveBuffer(obj)
             global inputDevice;
             %Get the input buffer here
-%             dryBuffer = inputDevice();
+             dryBuffer = inputDevice();
             %Pass it on
-%             obj.applyEffect(dryBuffer);
+            obj.applyEffect(dryBuffer);
 
             
         end     

@@ -19,7 +19,6 @@ classdef DeleteButton < Interactable
         function removeNode(obj,node)
             obj.removeButton();
             global Interactables
-                if isa(node, 'FlangerNode') || isa(node, 'LowpassNode') || isa(node, 'HighpassNode') || isa(node, 'SpectrumNode') || isa(node, 'DelayNode')
                     delete(node.anno);
                                         
                     node.inSocket.disconnectLine();
@@ -47,7 +46,7 @@ classdef DeleteButton < Interactable
                     delete(node.inSocket);
                     delete(node.outSocket);
                     delete(node);
-                end            
+                           
         end
         
         function removeButton(obj)

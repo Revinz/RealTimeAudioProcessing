@@ -2,6 +2,7 @@ classdef OutputNode < Node
     
     properties
         scope;
+        volume = 1;
     end
     
     methods
@@ -17,10 +18,6 @@ classdef OutputNode < Node
                 'TimeSpan',0.05, ...                      
                 'BufferLength',1.5e6, ...               
                 'YLimits',[-0.3,0.3]); 
-            
-            
-            % The settings
-            obj.settings{end + 1} = obj.newSetting('vol', 1);
         end
         
         function playBuffer(obj, finalBuffer)
@@ -29,7 +26,7 @@ classdef OutputNode < Node
             global input;
             %Play the buffer
             
-            finalBuffer = finalBuffer * obj.settings{1}.value;
+            finalBuffer = finalBuffer * obj.volume;
             overrun = outputDevice(finalBuffer);         
 
             if DEBUG == true

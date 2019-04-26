@@ -161,7 +161,7 @@ classdef Node < Interactable
             %Only open settings if there are any
             if ~(isempty(obj.settings))
                 
-                if isa(obj, 'FlangerNode') || isa(obj, 'LowpassNode') || isa(obj, 'SpectrumNode') || isa(obj, 'HighpassNode') || isa(obj, 'DelayNode')
+                if isa(obj, 'FlangerNode') || isa(obj, 'LowpassNode') || isa(obj, 'SpectrumNode') || isa(obj, 'HighpassNode') || isa(obj, 'DelayNode') || isa(obj, 'ReverbNode')
                     obj.delButton = DeleteButton([obj.anno.Position (obj.getLowestPos() - 0.2)], obj.Function, obj);
                     %Update the position right away, since it doesn't spawn
                     %at the correct position
@@ -224,8 +224,7 @@ classdef Node < Interactable
         end
         
         function closeSettings(obj)
-            global Interactables;
-            if isa(obj, 'FlangerNode') || isa(obj, 'LowpassNode') || isa(obj, 'SpectrumNode') || isa(obj, 'HighpassNode') || isa(obj, 'DelayNode')
+            if isa(obj, 'FlangerNode') || isa(obj, 'LowpassNode') || isa(obj, 'SpectrumNode') || isa(obj, 'HighpassNode') || isa(obj, 'DelayNode') || isa(obj, 'ReverbNode')
                     if ~isempty(obj.delButton)
                         obj.delButton.removeButton();
                     end
