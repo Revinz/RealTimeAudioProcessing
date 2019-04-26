@@ -24,6 +24,9 @@ classdef Node < Interactable
         settingsOpened = false;
         settingsBgAnno;
         
+        %Colors used
+        selectedColor = [0.68,0.81,0.88];
+        normalColor = [0.62,0.75,0.76];
         
         %The continuous buffer, used to prevent popcorn sounds
         contBuffer;
@@ -34,6 +37,7 @@ classdef Node < Interactable
             obj.Name = name;
             obj.contBuffer = ContinuosBuffer();
             obj.Function = fcn;
+            obj.anno.BackgroundColor = obj.normalColor; 
            
         end
                 
@@ -164,6 +168,8 @@ classdef Node < Interactable
         
         function openSettings(obj)
             
+            obj.anno.BackgroundColor = obj.selectedColor; 
+            
             %Only open settings if there are any
             if ~(isempty(obj.settings))
                 
@@ -176,8 +182,7 @@ classdef Node < Interactable
                     y1Pos = (i * 0.11) - 0.05; %Just pass where the lower left corner is for the setting
                     obj.settings{i}.draw(y1Pos);
                 end
-                obj.settingsBgAnno.BackgroundColor = 'k';
-                obj.settingsBgAnno.FaceAlpha = 0.2;
+                obj.settingsBgAnno.BackgroundColor = obj.selectedColor;
                 updateSettingsBgPos(obj) 
                 
                 
@@ -245,8 +250,7 @@ classdef Node < Interactable
         
         function closeSettings(obj)
             
-            obj.anno.BackgroundColor = 'none';
-            obj.anno.FaceAlpha = 0;
+            obj.anno.BackgroundColor = obj.normalColor;
             
             if ~(isempty(obj.settings))              
                 for i = 1:length(obj.settings)
