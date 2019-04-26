@@ -170,9 +170,6 @@ classdef Node < Interactable
                     obj.delButton
                 end
                 
-                
-                obj.anno.BackgroundColor = 'k';
-                obj.anno.FaceAlpha = 0.2;
                 obj.settingsBgAnno = annotation('textbox');
 
                 
