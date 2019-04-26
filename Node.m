@@ -5,6 +5,7 @@ classdef Node < Interactable
         dryBuffer;
         wetBuffer;
         
+        
         %Connection socket variables for annotations
         inSocket;
         outSocket;
@@ -13,6 +14,11 @@ classdef Node < Interactable
         orPos = []; %Original Position
         dragging = false;
         
+        Function;
+        delButton;
+        delButtonOffset = 0.17;
+        prevNode;
+
         %All the available settings for the node
         settings = {};
         settingsOpened = false;
@@ -27,11 +33,13 @@ classdef Node < Interactable
             obj.anno = annotation('textbox','Position',pos,'String',name,'ButtonDownFcn',fcn);
             obj.Name = name;
             obj.contBuffer = ContinuosBuffer();
-            
+            obj.Function = fcn;
+           
         end
                 
         function select(obj)
             obj.orPos = get(gcf,'CurrentPoint');
+            obj.prevNode = obj;
             
         end
 
@@ -47,8 +55,10 @@ classdef Node < Interactable
             if (obj.dragging == false)
                 obj.tap();
             end
-            
+            try
             obj.dragging = false;
+            catch
+            end
         end
 
         function drag(obj)
@@ -61,20 +71,42 @@ classdef Node < Interactable
                 set(obj.anno,'Position',get(obj.anno,'Position') + [posDiff(1:2) 0 0]);
                 updateSocketPositions(obj);
                 updateSettingsPos(obj);
+                
+                obj.updateDelButtonPos();
             catch
             end
-
-
         end
-        
+
         function tap(obj)
+            global Interactables
+
             if (obj.settingsOpened == false)
+                if isa(obj, 'FlangerNode') || isa(obj, 'LowpassNode') || isa(obj, 'SpectrumNode') || isa(obj, 'HighpassNode') || isa(obj, 'DelayNode')
+                    obj.delButton = DeleteButton([obj.anno.Position (obj.getLowestPos() - 0.2)], obj.Function, obj);
+                    %Update the position right away, since it doesn't spawn
+                    %at the correct position
+                    obj.updateDelButtonPos();
+                    Interactables{end+1} = obj.delButton;
+                end
                 disp('Settings Opened')
                 obj.openSettings();
             elseif (obj.settingsOpened == true)
+                if isa(obj, 'FlangerNode') || isa(obj, 'LowpassNode') || isa(obj, 'SpectrumNode') || isa(obj, 'HighpassNode') || isa(obj, 'DelayNode')
+                    delete(obj.delButton.anno);
+                    delete(obj.delButton);
+                    Interactables(end) = [];
+                end
                 disp('Settings Closed')
                 obj.closeSettings();
             end 
+        end
+
+        
+        function pressDelete(obj)
+            %if selectedObject == obj.delButton
+                obj.closeSettings();    
+                obj.delButton.removeNode(obj);
+            %end
         end
              
         function updateSocketPositions(obj)
@@ -138,20 +170,60 @@ classdef Node < Interactable
                 obj.anno.BackgroundColor = 'k';
                 obj.anno.FaceAlpha = 0.2;
                 obj.settingsBgAnno = annotation('textbox');
+
                 
                 for i = length(obj.settings):-1:1 %Go in reverse order since we start from the bottom and goes up
-                    y1Pos = (i * 0.11) - 0.05; %Just pass where the lower left corner is
+                    y1Pos = (i * 0.11) - 0.05; %Just pass where the lower left corner is for the setting
                     obj.settings{i}.draw(y1Pos);
                 end
                 obj.settingsBgAnno.BackgroundColor = 'k';
                 obj.settingsBgAnno.FaceAlpha = 0.2;
                 updateSettingsBgPos(obj) 
                 
+                
+                
                 obj.settingsOpened = true;
                 disp(obj.settingsOpened)
-            end
-                        
+            end           
         end
+        
+        function updateDelButtonPos(obj)
+            
+            obj.delButton.axes.Position(1) = obj.anno.Position(1)+obj.anno.Position(3)/2.7;
+            obj.delButton.axes.Position(2) = obj.getLowestPos() - obj.delButtonOffset;
+            
+            obj.delButton.anno.Position(1) = obj.anno.Position(1)+obj.anno.Position(3)/2.7;
+            obj.delButton.anno.Position(2) = obj.getLowestPos() - obj.delButtonOffset;
+        end
+        
+        function nodeDelete(obj)
+            global Interactables
+            if isa(obj, 'FlangerNode') || isa(obj, 'LowpassNode')
+                delete(obj.anno);
+                for i = 1:length(Interactables)
+                    try
+                        if Interactables{i}.anno == obj.anno
+                            Interactables{i} = [];
+                            Interactables{i-1} = [];
+                            Interactables{i-2} = [];
+                        end
+                    catch
+                    end
+                end
+                delete(obj.inSocket.anno);
+                delete(obj.outSocket.anno);
+                delete(obj.inSocket);
+                delete(obj.outSocket);
+                delete(obj);
+            end
+            
+        end
+        
+        %Returns the lowest position when the settings are opened
+        function lowestPos = getLowestPos(obj) 
+            lowestPos = obj.anno.Position(2) - ((length(obj.settings)* 0.11) - 0.05);
+        end
+        
         
         function updateSettingsPos(obj) 
             updateSettingsBgPos(obj) 
@@ -183,9 +255,13 @@ classdef Node < Interactable
                 obj.settingsOpened = false;
             end
             
-            delete(obj.settingsBgAnno)
-            
-      
+            if ~isempty(obj.settingsBgAnno)
+                try
+                    delete(obj.settingsBgAnno)
+                catch
+                end
+                    
+            end
         end
         
         %Add a new setting

@@ -32,9 +32,9 @@ pause(0.5);
 input = newNode('in', 'In',[0.05 0.35 0.15 0.15],@selectObject);
 output = newNode('out','Out',[0.85 0.50 0.15 0.15], @selectObject);
 
-Flanger = newNode('flanger','Flanger',[0.3 0.8 0.15 0.15],@selectObject);
-Lowpass = newNode('lowpass','Low Pass',[0.5 0.8 0.15 0.15],@selectObject);
-Highpass = newNode('highpass','High Pass',[0.4 0.6 0.15 0.15],@selectObject);
+% Flanger = newNode('flanger','Flanger',[0.3 0.8 0.15 0.15],@selectObject);
+% Lowpass = newNode('lowpass','Low Pass',[0.5 0.8 0.15 0.15],@selectObject);
+% Highpass = newNode('highpass','High Pass',[0.4 0.6 0.15 0.15],@selectObject);
 
 %settingsTest(Highpass);
 
@@ -95,23 +95,19 @@ while true
    drawnow();
 end
 
+button = newButton([0.9 0.05 .06 .10], @selectObject);
 
+selectedObject = [];
+nodeObject = [];
 
 %If an object is clicked on, it updates the selected object
     function selectObject(hObject,eventdata)
-        disp(hObject)
-        if isa(hObject, 'matlab.ui.Figure')
-            disp('SELECTED')
-            tic; %Start timer
-            timerStarted = true;
-            return
-        end
-        
-        selectedObject = findInteractableFromAnnoObject(hObject);    
+        selectedObject = findInteractableFromAnnoObject(hObject);
          if ~isempty(selectedObject)
              
              if ~isempty(selectedObject.anno)
-                selectedObject.select();
+                 selectedObject.select();
+                 createMenu(selectedObject);
              end
          end
     end
@@ -119,13 +115,29 @@ end
 %When the mouse button is released call the drop function of the
 %selected object and set the selectedObject to be empty
     function dropObject(hObject,eventdata)
-        
-        timerStarted = false;
-        
+                global Interactables;
         if ~isempty(selectedObject)
             
             if ~isempty(selectedObject.anno)
                     selectedObject.drop(); 
+
+                    
+                    %See if a delete button was clicked on, if it was
+                    %delete the respective node
+                    for i = 1:length(Interactables)                     
+                        if isa(Interactables{i}, 'Node') %Only want to check through nodes, since only nodes have delete buttons in them
+                            if ~isempty(Interactables{i}.delButton) %Check if the delete button exists
+                                    if ~isempty(Interactables{i}.delButton.anno) %Check if the annotion for the delete button exists
+                                        if Interactables{i}.delButton.anno == hObject.CurrentObject %Current object refers to clicked object
+                                          Interactables{i}.pressDelete(); %Delete the node
+                                          break; %Break out of the for loop -> Must do, otherwise results in an off-by-1 error.
+                                        end
+                                    end
+
+                            end
+
+                        end
+                    end
                     selectedObject = []; 
             end
 
@@ -144,8 +156,55 @@ end
         end
     end
 
-    function heldObject()
-        disp('HELD')
+    function createMenu(object)
+         global Interactables
+        if isa(object, 'CreateButton')
+            if object.isClicked == true
+                
+                pos = [object.anno.Position(1) object.anno.Position(2)];
+                newSelection([pos(1)-0.13 pos(2)+0.03 0.1 0.1],'Flanger',@selectObject);
+                newSelection([pos(1)-0.11 pos(2)+0.12 0.1 0.1],'LowPass',@selectObject);
+                newSelection([pos(1)-0.13 pos(2)-0.06 0.1 0.1],'Spectrum',@selectObject);
+                newSelection([pos(1)-0.05 pos(2)+0.13 0.1 0.1],'HighPass',@selectObject);
+                newSelection([pos(1)+0.01 pos(2)+0.12 0.1 0.1],'Delay',@selectObject);
+
+                
+            else
+                % Delete the effect selection textboxes using specified
+                % parameters
+                delete(findall(gcf,'LineStyle','none'))
+                delete(findall(gcf,'LineWidth',0.6))
+                for i = 1:5
+                    Interactables(end) = [];
+                end          
+            end
+        end
+        
+        
+        if isa(object, 'EffectSelector')
+            button.resetDefault();
+            object.anno.Position(3) = 0.15;
+            object.anno.Position(4) = 0.15;
+                for i = 1:5
+                    Interactables(end) = [];
+                end    
+            switch object.Name
+                case 'Flanger'
+                    Flanger = newNode('flanger','Flanger',object.anno.Position,@selectObject);
+                case 'LowPass'
+                    Lowpass = newNode('lowpass','Low Pass',object.anno.Position,@selectObject);
+                case 'Spectrum'
+                    Echo = newNode('spectrum','Spectrum',object.anno.Position,@selectObject);
+                case 'HighPass'
+                    HighPass = newNode('highpass','High Pass',object.anno.Position,@selectObject);
+                case 'Delay'
+                    HighPass = newNode('delay','Delay',object.anno.Position,@selectObject);
+                    
+            end
+            delete(findall(gcf,'LineStyle','none'))
+            delete(findall(gcf,'LineWidth',0.6))
+        end
+        
         
     end
 
@@ -176,6 +235,7 @@ function node = newNode(effect, name, position, select)
             node = ReverbNode(position, name, select);            
     end
     
+    
     if ~strcmp(effect, 'in')
         node.inSocket = newSocket('in', node, select); % Reference property in node class
     end
@@ -190,6 +250,17 @@ function node = newNode(effect, name, position, select)
     return
 end
 
+function selection = newSelection(position, name, select)
+         selection = EffectSelector(position, name, select);
+         global Interactables %Makes the global 'interactables' referencable
+        Interactables{end+1} = selection; % Adds the node to the end of interactables list
+end
+
+function button = newButton(position, select)
+         button = CreateButton(position,select);
+         global Interactables %Makes the global 'interactables' referencable
+        Interactables{end+1} = button; % Adds the node to the end of interactables list
+end
 % Function to create the in and out connection ellipses
 function socket = newSocket(type, node, select)
     if strcmp(type,'in')
@@ -208,9 +279,13 @@ function interactable = findInteractableFromAnnoObject(annotation)
 
     global Interactables
     for i = 1:length(Interactables)
+        
+        try
         if Interactables{i}.anno == annotation
             interactable = Interactables{i};
             return
+        end
+        catch
         end
     end
     interactable = [];
@@ -281,6 +356,5 @@ function updateConnectionPath(inNode)
     end
     
 end
-
 
 
