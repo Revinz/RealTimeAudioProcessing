@@ -35,11 +35,13 @@ classdef (Abstract) ConnectionSocket < Interactable
             for i = 1:length(Interactables)
                 if isa(Interactables{i}, socketType)
                     mouse = get(gcf,'CurrentPoint');
-                    socketPos = [Interactables{i}.anno.Position(1) + Interactables{i}.socketOffset(1) Interactables{i}.anno.Position(2) + Interactables{i}.socketOffset(2)]; 
-                    distance = pdist([mouse; socketPos],'euclidean');
-                    if distance < obj.maxConnectionRange
-                        socketInRange = Interactables{i};
-                        return
+                    if ~isempty(Interactables{i})
+                        socketPos = [Interactables{i}.anno.Position(1) + Interactables{i}.socketOffset(1) Interactables{i}.anno.Position(2) + Interactables{i}.socketOffset(2)]; 
+                        distance = pdist([mouse; socketPos],'euclidean');
+                        if distance < obj.maxConnectionRange
+                            socketInRange = Interactables{i};
+                            return
+                        end
                     end
                 end
             end

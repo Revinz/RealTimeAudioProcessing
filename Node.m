@@ -81,21 +81,9 @@ classdef Node < Interactable
             global Interactables
 
             if (obj.settingsOpened == false)
-                if isa(obj, 'FlangerNode') || isa(obj, 'LowpassNode') || isa(obj, 'SpectrumNode') || isa(obj, 'HighpassNode') || isa(obj, 'DelayNode')
-                    obj.delButton = DeleteButton([obj.anno.Position (obj.getLowestPos() - 0.2)], obj.Function, obj);
-                    %Update the position right away, since it doesn't spawn
-                    %at the correct position
-                    obj.updateDelButtonPos();
-                    Interactables{end+1} = obj.delButton;
-                end
                 disp('Settings Opened')
                 obj.openSettings();
             elseif (obj.settingsOpened == true)
-                if isa(obj, 'FlangerNode') || isa(obj, 'LowpassNode') || isa(obj, 'SpectrumNode') || isa(obj, 'HighpassNode') || isa(obj, 'DelayNode')
-                    delete(obj.delButton.anno);
-                    delete(obj.delButton);
-                    Interactables(end) = [];
-                end
                 disp('Settings Closed')
                 obj.closeSettings();
             end 
@@ -163,9 +151,19 @@ classdef Node < Interactable
         end  
         
         function openSettings(obj)
-            
+            global Interactables;
             %Only open settings if there are any
             if ~(isempty(obj.settings))
+                
+                if isa(obj, 'FlangerNode') || isa(obj, 'LowpassNode') || isa(obj, 'SpectrumNode') || isa(obj, 'HighpassNode') || isa(obj, 'DelayNode')
+                    obj.delButton = DeleteButton([obj.anno.Position (obj.getLowestPos() - 0.2)], obj.Function, obj);
+                    %Update the position right away, since it doesn't spawn
+                    %at the correct position
+                    obj.updateDelButtonPos();
+                    Interactables{end+1} = obj.delButton;
+                    obj.delButton
+                end
+                
                 
                 obj.anno.BackgroundColor = 'k';
                 obj.anno.FaceAlpha = 0.2;
@@ -195,30 +193,7 @@ classdef Node < Interactable
             obj.delButton.anno.Position(1) = obj.anno.Position(1)+obj.anno.Position(3)/2.7;
             obj.delButton.anno.Position(2) = obj.getLowestPos() - obj.delButtonOffset;
         end
-        
-        function nodeDelete(obj)
-            global Interactables
-            if isa(obj, 'FlangerNode') || isa(obj, 'LowpassNode')
-                delete(obj.anno);
-                for i = 1:length(Interactables)
-                    try
-                        if Interactables{i}.anno == obj.anno
-                            Interactables{i} = [];
-                            Interactables{i-1} = [];
-                            Interactables{i-2} = [];
-                        end
-                    catch
-                    end
-                end
-                delete(obj.inSocket.anno);
-                delete(obj.outSocket.anno);
-                delete(obj.inSocket);
-                delete(obj.outSocket);
-                delete(obj);
-            end
-            
-        end
-        
+   
         %Returns the lowest position when the settings are opened
         function lowestPos = getLowestPos(obj) 
             lowestPos = obj.anno.Position(2) - ((length(obj.settings)* 0.11) - 0.05);
@@ -244,6 +219,12 @@ classdef Node < Interactable
         end
         
         function closeSettings(obj)
+            global Interactables;
+            if isa(obj, 'FlangerNode') || isa(obj, 'LowpassNode') || isa(obj, 'SpectrumNode') || isa(obj, 'HighpassNode') || isa(obj, 'DelayNode')
+                    if ~isempty(obj.delButton)
+                        obj.delButton.removeButton();
+                    end
+            end
             
             obj.anno.BackgroundColor = 'none';
             obj.anno.FaceAlpha = 0;
@@ -262,6 +243,7 @@ classdef Node < Interactable
                 end
                     
             end
+
         end
         
         %Add a new setting

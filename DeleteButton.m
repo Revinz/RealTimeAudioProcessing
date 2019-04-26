@@ -17,17 +17,19 @@ classdef DeleteButton < Interactable
        end
         
         function removeNode(obj,node)
-            obj.img = [];
-            delete(obj.axes);
-            delete(obj.anno);
+            obj.removeButton();
             global Interactables
                 if isa(node, 'FlangerNode') || isa(node, 'LowpassNode') || isa(node, 'HighpassNode') || isa(node, 'SpectrumNode') || isa(node, 'DelayNode')
                     delete(node.anno);
+                                        
+                    node.inSocket.disconnectLine();
+                    node.outSocket.disconnectLine();
                     for i = 1:length(Interactables)
                         try
                             if Interactables{i}.anno == node.anno
                                 Interactables(i) = []; %Remove the node from the interactables list
-
+                                Interactables(i-1) = [];
+                                Interactables(i-2) = [];
                             end
                         catch
                         end
@@ -38,6 +40,8 @@ classdef DeleteButton < Interactable
                         catch
                         end
                     end
+
+                    
                     delete(node.inSocket.anno);
                     delete(node.outSocket.anno);
                     delete(node.inSocket);
@@ -45,7 +49,16 @@ classdef DeleteButton < Interactable
                     delete(node);
                 end            
         end
-            
+        
+        function removeButton(obj)
+            global Interactables
+            obj.img = [];
+            delete(obj.axes);
+            delete(obj.anno);
+            Interactables{end} = [];
+        end
+        
+        
         function select(obj)
         end
             

@@ -99,11 +99,12 @@ nodeObject = [];
             if ~isempty(selectedObject.anno)
                     selectedObject.drop(); 
 
+                    
                     %See if a delete button was clicked on, if it was
                     %delete the respective node
                     for i = 1:length(Interactables)                     
                         if isa(Interactables{i}, 'Node') %Only want to check through nodes, since only nodes have delete buttons in them
-                            if  ~isempty(Interactables{i}.delButton) %Check if the delete button exists
+                            if ishandle(Interactables{i}.delButton) %Check if the delete button exists
                                     disp(Interactables{i}.delButton)
                                     if ishandle(Interactables{i}.delButton.anno) %Check if the annotion for the delete button exists
                                         disp('not empty')
