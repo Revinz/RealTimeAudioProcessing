@@ -2,8 +2,8 @@ clc; close all;
 %Show debug options
 global DEBUG;
 DEBUG = false;
-global allSettings;
-allSettings = {};
+global allSettings
+allSettings = {}
 %Initialize global variables
 global Interactables; % The list of all interactables
 Interactables = {};
@@ -23,14 +23,11 @@ GUI();
 
 function GUI %drag_drop
 global input
-loadingBar = waitbar(0,'Loading Figure'); %Loading bar
-pause(0.5);
-screen = figure('WindowButtonUpFcn',@dropObject,'units','normalized','Position',[0 0 0.4 0.4],'WindowButtonMotionFcn',@dragObject, 'ButtonDownFcn', @selectObject, 'visible', 'off'); % 'WindowButtonUpFcn',@dropObject
 
-loadingBar = waitbar(0.2,loadingBar, 'Loading Elements'); %Loading bar
-pause(0.5);
-input = newNode('in', 'In',[0.05 0.35 0.15 0.15],@selectObject);
-output = newNode('out','Out',[0.85 0.50 0.15 0.15], @selectObject);
+figure('WindowButtonUpFcn',@dropObject,'units','normalized','Position',[0 0 0.4 0.4],'WindowButtonMotionFcn',@dragObject, 'ButtonDownFcn', @selectObject); % 'WindowButtonUpFcn',@dropObject
+input = newNode('in', 'In',[0.05 0.55 0.15 0.15],@selectObject);
+
+output = newNode('out','Out',[0.8 0.55 0.15 0.15], @selectObject);
 
 % Flanger = newNode('flanger','Flanger',[0.3 0.8 0.15 0.15],@selectObject);
 % Lowpass = newNode('lowpass','Low Pass',[0.5 0.8 0.15 0.15],@selectObject);
@@ -38,11 +35,8 @@ output = newNode('out','Out',[0.85 0.50 0.15 0.15], @selectObject);
 
 %settingsTest(Highpass);
 
+spectrumNode = newNode('spectrum', 'Spectrum', [0.2 0.2 0.15 0.15], @selectObject);
 delayNode = newNode('delay', 'Delay', [0.6 0.2 0.15 0.15], @selectObject);
-reverbNode = newNode('reverb', 'Reverb', [0.5 0.3 0.15 0.15], @selectObject);
-
-spectrumNode = newNode('spectrum', 'Spectrum', [0.2 0.2 0.15 0.15], @selectObject)
-spectrumNode2 = newNode('spectrum', 'Spectrum2', [0.2 0.2 0.15 0.15], @selectObject)
 %TestNode = newNode('in','Test Node',[0.55 0.55 0.15 0.15], @selectObject);
 
 selectedObject = [];
@@ -50,50 +44,34 @@ holdTime = 0.5; %How long time to hold the mouse down before the hold function g
 timerStarted = false;
 
 %Arduino
-clear a;
-global a; %Want to be able to access the arduino properties from anywhere
-loadingBar = waitbar(0.5,loadingBar,'Connecting to Arduino');
-a = ArduinoPID();
+% clear a;
+% global a; %Want to be able to access the arduino properties from anywhere
+% a = ArduinoPID();
+% 
+% a.turnOnLED();
 
+% while true
+%     
+%    updateConnectionPath(input);
+%    input.retrieveBuffer();
+%    
+%    %Functionality to register when the mouse button has been held down for x
+%    %amount of time
+%    if (timerStarted == true)
+% 
+%         elapsedTime = toc; %Get the elapsed time
+% 
+%         if (elapsedTime >= holdTime)
+%             holdObject();
+%             timerStarted = false;            
+%         end
+%    end
+%    a.loop(); %Seems like the Arduino runs in parallel
+%    drawnow();
+% end
 
-
-loadingBar = waitbar(1,loadingBar,'Done!');
-pause(0.5);
-%Show the screen and close the loading bar
-set( screen, 'Visible', 'on' );
-close(loadingBar);
-
-%Pop-up if failing to establish a connection to the arduino
-if isempty(a.arduino)
-    waitfor(warndlg('Could not connect to Arduino','Warning')); %Waitfor is used to pause the program until the "close" button is hit
-end
-
-%Show instructionss
-helpdlg('INSTRUCTIONS:','Instructions');
-
-while true
-    
-   updateConnectionPath(input);
-   input.retrieveBuffer();
-   
-   %Functionality to register when the mouse button has been held down for x
-   %amount of time
-   if (timerStarted == true)
-
-        elapsedTime = toc; %Get the elapsed time
-
-        if (elapsedTime >= holdTime)
-            holdObject();
-            timerStarted = false;            
-        end
-   end
-   
-   if ~isempty(a.arduino)
-    a.loop(); %Seems like the Arduino runs in parallel
-   end
-   
-   drawnow();
-end
+% spectrumNode = newNode('spectrum', 'Spectrum', [0.2 0.2 0.15 0.15], @selectObject)
+%TestNode = newNode('in','Test Node',[0.55 0.55 0.15 0.15], @selectObject);
 
 button = newButton([0.9 0.05 .06 .10], @selectObject);
 
@@ -121,11 +99,12 @@ nodeObject = [];
             if ~isempty(selectedObject.anno)
                     selectedObject.drop(); 
 
+                    
                     %See if a delete button was clicked on, if it was
                     %delete the respective node
                     for i = 1:length(Interactables)                     
                         if isa(Interactables{i}, 'Node') %Only want to check through nodes, since only nodes have delete buttons in them
-                            if  ~isempty(Interactables{i}.delButton) %Check if the delete button exists
+                            if ishandle(Interactables{i}.delButton) %Check if the delete button exists
                                     disp(Interactables{i}.delButton)
                                     if ishandle(Interactables{i}.delButton.anno) %Check if the annotion for the delete button exists
                                         disp('not empty')
@@ -231,8 +210,7 @@ function node = newNode(effect, name, position, select)
             node = SpectrumNode(position, name, select);
         case 'delay'
             node = DelayNode(position, name, select);
-        case 'reverb'
-            node = ReverbNode(position, name, select);            
+            
     end
     
     
