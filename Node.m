@@ -16,6 +16,7 @@ classdef Node < Interactable
         
         Function;
         delButton;
+        delButtonOffset = 0.17;
         prevNode;
 
         %All the available settings for the node
@@ -32,8 +33,8 @@ classdef Node < Interactable
             obj.anno = annotation('textbox','Position',pos,'String',name,'ButtonDownFcn',fcn);
             obj.Name = name;
             obj.contBuffer = ContinuosBuffer();
-                        obj.Function = fcn;
-
+            obj.Function = fcn;
+           
         end
                 
         function select(obj)
@@ -71,8 +72,7 @@ classdef Node < Interactable
                 updateSocketPositions(obj);
                 updateSettingsPos(obj);
                 
-                obj.delButton.anno.Position(1) = obj.anno.Position(1)+obj.anno.Position(3)/2.7;
-                obj.delButton.anno.Position(2) = obj.anno.Position(2) + 0.15;
+                obj.updateDelButtonPos();
             catch
             end
         end
@@ -82,7 +82,10 @@ classdef Node < Interactable
 
             if (obj.settingsOpened == false)
                 if isa(obj, 'FlangerNode') || isa(obj, 'LowpassNode') || isa(obj, 'SpectrumNode') || isa(obj, 'HighpassNode') || isa(obj, 'DelayNode')
-                    obj.delButton = DeleteButton(obj.anno.Position, obj.Function);
+                    obj.delButton = DeleteButton([obj.anno.Position (obj.getLowestPos() - 0.2)], obj.Function, obj);
+                    %Update the position right away, since it doesn't spawn
+                    %at the correct position
+                    obj.updateDelButtonPos();
                     Interactables{end+1} = obj.delButton;
                 end
                 disp('Settings Opened')
@@ -99,11 +102,11 @@ classdef Node < Interactable
         end
 
         
-        function pressDelete(obj,selectedObject)
-            if selectedObject == obj.delButton
-                obj.closeSettings();
+        function pressDelete(obj)
+            %if selectedObject == obj.delButton
+                obj.closeSettings();    
                 obj.delButton.removeNode(obj);
-            end
+            %end
         end
              
         function updateSocketPositions(obj)
@@ -168,9 +171,9 @@ classdef Node < Interactable
                 obj.anno.FaceAlpha = 0.2;
                 obj.settingsBgAnno = annotation('textbox');
 
-                lowestPos = (length(obj.settings)* 0.11) - 0.05;
+                
                 for i = length(obj.settings):-1:1 %Go in reverse order since we start from the bottom and goes up
-                    y1Pos = (i * 0.11) - 0.05; %Just pass where the lower left corner is
+                    y1Pos = (i * 0.11) - 0.05; %Just pass where the lower left corner is for the setting
                     obj.settings{i}.draw(y1Pos);
                 end
                 obj.settingsBgAnno.BackgroundColor = 'k';
@@ -184,7 +187,14 @@ classdef Node < Interactable
             end           
         end
         
-
+        function updateDelButtonPos(obj)
+            
+            obj.delButton.axes.Position(1) = obj.anno.Position(1)+obj.anno.Position(3)/2.7;
+            obj.delButton.axes.Position(2) = obj.getLowestPos() - obj.delButtonOffset;
+            
+            obj.delButton.anno.Position(1) = obj.anno.Position(1)+obj.anno.Position(3)/2.7;
+            obj.delButton.anno.Position(2) = obj.getLowestPos() - obj.delButtonOffset;
+        end
         
         function nodeDelete(obj)
             global Interactables
@@ -207,6 +217,11 @@ classdef Node < Interactable
                 delete(obj);
             end
             
+        end
+        
+        %Returns the lowest position when the settings are opened
+        function lowestPos = getLowestPos(obj) 
+            lowestPos = obj.anno.Position(2) - ((length(obj.settings)* 0.11) - 0.05);
         end
         
         
@@ -240,7 +255,13 @@ classdef Node < Interactable
                 obj.settingsOpened = false;
             end
             
-            delete(obj.settingsBgAnno)
+            if ~isempty(obj.settingsBgAnno)
+                try
+                    delete(obj.settingsBgAnno)
+                catch
+                end
+                    
+            end
         end
         
         %Add a new setting

@@ -80,7 +80,7 @@ nodeObject = [];
 
 %If an object is clicked on, it updates the selected object
     function selectObject(hObject,eventdata)
-        selectedObject = findInteractableFromAnnoObject(hObject);    
+        selectedObject = findInteractableFromAnnoObject(hObject);
          if ~isempty(selectedObject)
              
              if ~isempty(selectedObject.anno)
@@ -93,16 +93,28 @@ nodeObject = [];
 %When the mouse button is released call the drop function of the
 %selected object and set the selectedObject to be empty
     function dropObject(hObject,eventdata)
-                
+                global Interactables;
         if ~isempty(selectedObject)
             
             if ~isempty(selectedObject.anno)
                     selectedObject.drop(); 
-                    if isa(selectedObject, 'Node')
-                        nodeObject = selectedObject;
-                    end
-                    if isa(selectedObject, 'DeleteButton')
-                        nodeObject.pressDelete(selectedObject);
+
+                    
+                    %See if a delete button was clicked on, if it was
+                    %delete the respective node
+                    for i = 1:length(Interactables)                     
+                        if isa(Interactables{i}, 'Node') %Only want to check through nodes, since only nodes have delete buttons in them
+                            if ~isempty(Interactables{i}.delButton) %Check if the delete button exists
+                                    if ~isempty(Interactables{i}.delButton.anno) %Check if the annotion for the delete button exists
+                                        if Interactables{i}.delButton.anno == hObject.CurrentObject %Current object refers to clicked object
+                                          Interactables{i}.pressDelete(); %Delete the node
+                                          break; %Break out of the for loop -> Must do, otherwise results in an off-by-1 error.
+                                        end
+                                    end
+
+                            end
+
+                        end
                     end
                     selectedObject = []; 
             end
