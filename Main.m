@@ -25,12 +25,12 @@ function GUI %drag_drop
 global input
 loadingBar = waitbar(0,'Loading Figure'); %Loading bar
 pause(0.5);
-screen = figure('WindowButtonUpFcn',@dropObject,'units','normalized','Position',[0 0 0.4 0.4],'WindowButtonMotionFcn',@dragObject, 'ButtonDownFcn', @selectObject, 'visible', 'off'); % 'WindowButtonUpFcn',@dropObject
+screen = figure('WindowButtonUpFcn',@dropObject,'units','normalized','Position',[0 0 0.4 0.4],'WindowButtonMotionFcn',@dragObject, 'ButtonDownFcn', @selectObject, 'visible', 'off','Color',[0.25 0.25 0.4]); % 'WindowButtonUpFcn',@dropObject
 
 loadingBar = waitbar(0.2,loadingBar, 'Loading Elements'); %Loading bar
 pause(0.5);
-input = newNode('in', 'In',[0.05 0.35 0.15 0.15],@selectObject);
-output = newNode('out','Out',[0.85 0.50 0.15 0.15], @selectObject);
+input = newNode('in', 'In',[0 0.5 0.15 0.15],@selectObject);
+output = newNode('out','Out',[0.85 0.5 0.15 0.15], @selectObject);
 
 % Flanger = newNode('flanger','Flanger',[0.3 0.8 0.15 0.15],@selectObject);
 % Lowpass = newNode('lowpass','Low Pass',[0.5 0.8 0.15 0.15],@selectObject);
@@ -38,14 +38,16 @@ output = newNode('out','Out',[0.85 0.50 0.15 0.15], @selectObject);
 
 %settingsTest(Highpass);
 
-delayNode = newNode('delay', 'Delay', [0.6 0.2 0.15 0.15], @selectObject);
-reverbNode = newNode('reverb', 'Reverb', [0.5 0.3 0.15 0.15], @selectObject);
-
-spectrumNode = newNode('spectrum', 'Spectrum', [0.2 0.2 0.15 0.15], @selectObject)
-spectrumNode2 = newNode('spectrum', 'Spectrum2', [0.2 0.2 0.15 0.15], @selectObject)
+% delayNode = newNode('delay', 'Delay', [0.6 0.2 0.15 0.15], @selectObject);
+% reverbNode = newNode('reverb', 'Reverb', [0.5 0.3 0.15 0.15], @selectObject);
+% 
+% spectrumNode = newNode('spectrum', 'Spectrum', [0.2 0.2 0.15 0.15], @selectObject)
+% spectrumNode2 = newNode('spectrum', 'Spectrum2', [0.2 0.2 0.15 0.15], @selectObject)
 %TestNode = newNode('in','Test Node',[0.55 0.55 0.15 0.15], @selectObject);
 
 selectedObject = [];
+button = newButton([0.9 0.05 .06 .10], @selectObject);
+
 holdTime = 0.5; %How long time to hold the mouse down before the hold function gets executed
 timerStarted = false;
 
@@ -54,8 +56,6 @@ clear a;
 global a; %Want to be able to access the arduino properties from anywhere
 loadingBar = waitbar(0.5,loadingBar,'Connecting to Arduino');
 a = ArduinoPID();
-
-
 
 loadingBar = waitbar(1,loadingBar,'Done!');
 pause(0.5);
@@ -95,9 +95,7 @@ while true
    drawnow();
 end
 
-button = newButton([0.9 0.05 .06 .10], @selectObject);
 
-selectedObject = [];
 nodeObject = [];
 
 %If an object is clicked on, it updates the selected object
@@ -167,6 +165,7 @@ nodeObject = [];
                 newSelection([pos(1)-0.13 pos(2)-0.06 0.1 0.1],'Spectrum',@selectObject);
                 newSelection([pos(1)-0.05 pos(2)+0.13 0.1 0.1],'HighPass',@selectObject);
                 newSelection([pos(1)+0.01 pos(2)+0.12 0.1 0.1],'Delay',@selectObject);
+                newSelection([pos(1)-0.07 pos(2)+0.04 0.1 0.1],'Reverb',@selectObject);
 
                 
             else
@@ -194,12 +193,13 @@ nodeObject = [];
                 case 'LowPass'
                     Lowpass = newNode('lowpass','Low Pass',object.anno.Position,@selectObject);
                 case 'Spectrum'
-                    Echo = newNode('spectrum','Spectrum',object.anno.Position,@selectObject);
+                    Spectrum = newNode('spectrum','Spectrum',object.anno.Position,@selectObject);
                 case 'HighPass'
                     HighPass = newNode('highpass','High Pass',object.anno.Position,@selectObject);
                 case 'Delay'
-                    HighPass = newNode('delay','Delay',object.anno.Position,@selectObject);
-                    
+                    Delay = newNode('delay','Delay',object.anno.Position,@selectObject);
+                case 'Reverb'
+                    Reverb = newNode('reverb','Reverb',object.anno.Position,@selectObject);    
             end
             delete(findall(gcf,'LineStyle','none'))
             delete(findall(gcf,'LineWidth',0.6))

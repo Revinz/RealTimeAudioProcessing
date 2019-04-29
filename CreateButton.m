@@ -10,6 +10,7 @@ classdef CreateButton < Interactable
     methods
         
         function obj = CreateButton(pos,fcn)
+            annotation('ellipse','Position',pos,'Color',obj.color,'FaceColor', [0.62,0.75,0.76]);
             obj.vertical = annotation('line',[pos(1)+pos(3)/2 pos(1)+pos(3)/2],[pos(2)+pos(4)/4 pos(2)+pos(4)-pos(4)/4],'Color',obj.color); % lines to make the cross
             obj.horizontal = annotation('line',[pos(1)+pos(3)/4 pos(1)+pos(3)-pos(3)/4],[pos(2)+pos(4)/2 pos(2)+pos(4)/2],'Color',obj.color);
             obj.posY = obj.vertical.Position;
