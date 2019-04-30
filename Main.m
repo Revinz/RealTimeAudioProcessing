@@ -158,14 +158,14 @@ nodeObject = [];
          global Interactables
         if isa(object, 'CreateButton')
             if object.isClicked == true
-                
+                    
                 pos = [object.anno.Position(1) object.anno.Position(2)];
                 newSelection([pos(1)-0.13 pos(2)+0.03 0.1 0.1],'Flanger',@selectObject);
                 newSelection([pos(1)-0.11 pos(2)+0.12 0.1 0.1],'LowPass',@selectObject);
                 newSelection([pos(1)-0.13 pos(2)-0.06 0.1 0.1],'Spectrum',@selectObject);
-                newSelection([pos(1)-0.05 pos(2)+0.13 0.1 0.1],'HighPass',@selectObject);
+%                 newSelection([pos(1)-0.05 pos(2)+0.13 0.1 0.1],'HighPass',@selectObject);
                 newSelection([pos(1)+0.01 pos(2)+0.12 0.1 0.1],'Delay',@selectObject);
-                newSelection([pos(1)-0.07 pos(2)+0.04 0.1 0.1],'Reverb',@selectObject);
+                newSelection([pos(1)-0.05 pos(2)+0.13 0.1 0.1],'Reverb',@selectObject);
 
                 
             else
