@@ -44,7 +44,7 @@ reverbNode = newNode('reverb', 'Reverb', [0.5 0.3 0.15 0.15], @selectObject);
 spectrumNode = newNode('spectrum', 'Spectrum', [0.2 0.2 0.15 0.15], @selectObject)
 spectrumNode2 = newNode('spectrum', 'Spectrum2', [0.2 0.2 0.15 0.15], @selectObject)
 %TestNode = newNode('in','Test Node',[0.55 0.55 0.15 0.15], @selectObject);
-
+button = newButton([0.9 0.05 .06 .10], @selectObject);
 selectedObject = [];
 holdTime = 0.5; %How long time to hold the mouse down before the hold function gets executed
 timerStarted = false;
@@ -172,22 +172,22 @@ nodeObject = [];
             else
                 % Delete the effect selection textboxes using specified
                 % parameters
-                delete(findall(gcf,'LineStyle','none'))
-                delete(findall(gcf,'LineWidth',0.6))
-                for i = 1:5
-                    Interactables(end) = [];
+                for i = 1:length(Interactables)
+                    if isa(Interactables{i}, 'EffectSelector')
+                        delete(Interactables{i}.anno);
+                        delete(Interactables{i}.text);
+                        Interactables{i} = [];
+                    end
                 end          
             end
         end
         
         
-        if isa(object, 'EffectSelector')
+        if isa(object, 'EffectSelector') 
             button.resetDefault();
             object.anno.Position(3) = 0.15;
-            object.anno.Position(4) = 0.15;
-                for i = 1:5
-                    Interactables(end) = [];
-                end    
+            object.anno.Position(4) = 0.15;  
+                
             switch object.Name
                 case 'Flanger'
                     Flanger = newNode('flanger','Flanger',object.anno.Position,@selectObject);
@@ -201,9 +201,18 @@ nodeObject = [];
                     HighPass = newNode('delay','Delay',object.anno.Position,@selectObject);
                     
             end
-            delete(findall(gcf,'LineStyle','none'))
-            delete(findall(gcf,'LineWidth',0.6))
+            
+                    
+            for i = 1:length(Interactables)
+                        if isa(Interactables{i}, 'EffectSelector')
+                            delete(Interactables{i}.anno);
+                            delete(Interactables{i}.text);
+                            Interactables{i} = [];
+                        end
+            end 
+            
         end
+
         
         
     end

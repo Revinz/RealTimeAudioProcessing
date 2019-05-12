@@ -54,7 +54,13 @@ classdef DeleteButton < Interactable
             obj.img = [];
             delete(obj.axes);
             delete(obj.anno);
-            Interactables{end} = [];
+            
+            for i = 1:length(Interactables)
+                
+                if Interactables{i} == obj
+                    Interactables{i} = [];
+                end
+            end
         end
         
         
