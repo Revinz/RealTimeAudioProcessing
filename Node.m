@@ -1,4 +1,4 @@
-classdef Node < Interactable
+classdef (Abstract) Node < Interactable
     properties 
         Name;
         
