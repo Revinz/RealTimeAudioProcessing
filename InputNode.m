@@ -4,13 +4,13 @@ classdef InputNode < Node
             global inputDevice;
             global outputDevice;
             global Fs;
-            global frameLength;
+            global frameLength; 
 
             obj = obj@Node(pos,name,fcn); %Call parent constructor
             inputDevice = audioDeviceReader(Fs, frameLength,'BitDepth','16-bit integer');
             outputDevice = audioDeviceWriter( ...
                     'SampleRate',inputDevice.SampleRate); 
-            
+        
         end
         
         function retrieveBuffer(obj)

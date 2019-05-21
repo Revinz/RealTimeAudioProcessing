@@ -33,7 +33,7 @@ classdef Node < Interactable
     end
     methods
         function  obj = Node(pos,name,fcn)
-            obj.anno = annotation('textbox','Position',pos,'String',name,'ButtonDownFcn',fcn);
+            obj.anno = annotation('textbox','Position',pos,'String',name,'ButtonDownFcn',fcn,'LineWidth',0.55);
             obj.Name = name;
             obj.contBuffer = ContinuosBuffer();
             obj.Function = fcn;

@@ -21,8 +21,7 @@ classdef DeleteButton < Interactable
             global Interactables
                     delete(node.anno);
                                         
-                    node.inSocket.disconnectLine();
-                    node.outSocket.disconnectLine();
+                    
                     for i = 1:length(Interactables)
                         try
                             if Interactables{i}.anno == node.anno
@@ -39,13 +38,19 @@ classdef DeleteButton < Interactable
                         catch
                         end
                     end
+                    
+
 
                     
                     delete(node.inSocket.anno);
                     delete(node.outSocket.anno);
+
                     delete(node.inSocket);
                     delete(node.outSocket);
                     delete(node);
+                    node.inSocket.disconnectLine();
+                    node.outSocket.disconnectLine();
+
                            
         end
         

@@ -52,24 +52,30 @@ holdTime = 0.5; %How long time to hold the mouse down before the hold function g
 timerStarted = false;
 
 %Arduino
-clear a;
-global a; %Want to be able to access the arduino properties from anywhere
-loadingBar = waitbar(0.5,loadingBar,'Connecting to Arduino');
+% clear a;
+% global a; %Want to be able to access the arduino properties from anywhere
+% loadingBar = waitbar(0.5,loadingBar,'Connecting to Arduino');
 a = ArduinoPID();
 
-loadingBar = waitbar(1,loadingBar,'Done!');
-pause(0.5);
+% loadingBar = waitbar(1,loadingBar,'Done!');
+% pause(0.5);
 %Show the screen and close the loading bar
 set( screen, 'Visible', 'on' );
 close(loadingBar);
 
 %Pop-up if failing to establish a connection to the arduino
-if isempty(a.arduino)
-    waitfor(warndlg('Could not connect to Arduino','Warning')); %Waitfor is used to pause the program until the "close" button is hit
-end
+% if isempty(a.arduino)
+%     waitfor(warndlg('Could not connect to Arduino','Warning')); %Waitfor is used to pause the program until the "close" button is hit
+% end
 
 %Show instructionss
-helpdlg('INSTRUCTIONS:','Instructions');
+% helpdlg('INSTRUCTIONS:','Instructions');
+
+clearvars -global a;
+% a = arduino('COM12', 'uno');
+global Interactables;
+global Fs;
+global frameLength;
 
 while true
     
@@ -88,11 +94,38 @@ while true
         end
    end
    
-   if ~isempty(a.arduino)
-    a.loop(); %Seems like the Arduino runs in parallel
-   end
+%    if ~isempty(a.arduino)
+%     a.loop(); %Seems like the Arduino runs in parallel
+%    end
    
    drawnow();
+       analogButton = readVoltage(a,'A1') * (1023 / 5);
+       analogKnob = readVoltage(a,'A5');
+%        disp(analogKnob);
+       if analogButton > 200
+           writeDigitalPin(a, 'A3', 1);
+           for j = 1:length(Interactables)
+               if isa(Interactables{j}, 'FlangerNode') || isa(Interactables{j}, 'LowpassNode') || isa(Interactables{j}, 'DelayNode') || isa(Interactables{j}, 'ReverbNode') || isa(Interactables{j}, 'SpectrumNode')  %Only want to check through nodes, since only nodes have delete buttons in them
+                       if ishandle(Interactables{j}.anno) %Check if the annotion for the delete button exists
+                             if Interactables{j}.settingsOpened == false                               
+                                 Interactables{j}.openSettings();
+                             end
+                             try
+                                 Interactables{j}.pressDelete();
+                             catch
+                             end
+                             break;
+                       end
+               end
+           end
+       else
+           writeDigitalPin(a, 'A3', 0);
+       end
+       
+       output.volume = analogKnob - 4;
+%        frameLength = 1000 * analogKnob;
+%        disp(output.volume);
+%        pause(0.5);
 end
 
 
@@ -113,7 +146,6 @@ nodeObject = [];
 %When the mouse button is released call the drop function of the
 %selected object and set the selectedObject to be empty
     function dropObject(hObject,eventdata)
-                global Interactables;
         if ~isempty(selectedObject)
             
             if ~isempty(selectedObject.anno)
@@ -132,7 +164,6 @@ nodeObject = [];
                                           break; %Break out of the for loop -> Must do, otherwise results in an off-by-1 error.
                                         end
                                     end
-
                             end
                         end
                     end
@@ -155,7 +186,6 @@ nodeObject = [];
     end
 
     function createMenu(object)
-         global Interactables
         if isa(object, 'CreateButton')
             if object.isClicked == true
                     
