@@ -20,8 +20,11 @@ classdef DeleteButton < Interactable
             obj.removeButton();
             global Interactables
                     delete(node.anno);
-                                        
+                    %Disconnect the lines attached to the node                            
+                    node.inSocket.disconnectLine();
+                    node.outSocket.disconnectLine();
                     
+                    %Remove the node and sockets from the interactables list
                     for i = 1:length(Interactables)
                         try
                             if Interactables{i}.anno == node.anno
@@ -32,16 +35,8 @@ classdef DeleteButton < Interactable
                         catch
                         end
                     end
-                    if ~isempty(node.settingsBgAnno)
-                        try
-                        delete(node.settingsBgAnno);
-                        catch
-                        end
-                    end
-                    
 
-
-                    
+                    %Delete everything related to that node
                     delete(node.inSocket.anno);
                     delete(node.outSocket.anno);
 
@@ -59,7 +54,13 @@ classdef DeleteButton < Interactable
             obj.img = [];
             delete(obj.axes);
             delete(obj.anno);
-            Interactables{end} = [];
+            
+            for i = 1:length(Interactables)
+                
+                if Interactables{i} == obj
+                    Interactables{i} = [];
+                end
+            end
         end
         
         
