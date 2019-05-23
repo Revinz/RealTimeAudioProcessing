@@ -52,8 +52,8 @@ classdef ArduinoPID
             
             %Read Sensor
             SensorVal = obj.arduino.readVoltage("A1") * (1024 / 5); %Read and convert it into a scale from 0 - 1024
-            disp(SensorVal)
-            disp(obj.bnDown)
+            %disp(SensorVal)
+
             %Hysterisis on the sensor value
             if (SensorVal >= obj.hysON && obj.bnDown == false)
                 obj.bnDown = true;
@@ -78,15 +78,24 @@ classdef ArduinoPID
             writeDigitalPin(obj.arduino, 'A2', 1);
             writeDigitalPin(obj.arduino, 'A3', 1);
             
-            
-            for i = 1 : length(Interactables)
+            index = 1;
+            while index <= length(Interactables)
+                length(Interactables)
                 
-                if isa(Interactables{i}, 'Node')
-                    if ~isa(Interactables{i}, 'InputNode' || )
-                    
+                    if isa(Interactables{index}, 'Node')
+                        if ~isa(Interactables{index}, 'InputNode') && ~isa(Interactables{index}, 'OutputNode')
+                           if Interactables{index}.settingsOpened == false
+                                Interactables{index}.openSettings();
+                                Interactables{index}.pressDelete();
+                           else 
+                               Interactables{index}.pressDelete();
+                           end
+                           length(Interactables)
+                           index = 1; %Re
+                        end
                     end
-                end
-                
+                    
+                    index = index + 1;
             end
             
 %                    writeDigitalPin(a, 'A3', 1);

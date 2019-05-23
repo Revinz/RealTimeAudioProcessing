@@ -45,7 +45,7 @@ output = newNode('out','Out',[0.85 0.5 0.15 0.15], @selectObject);
 % spectrumNode = newNode('spectrum', 'Spectrum', [0.2 0.2 0.15 0.15], @selectObject)
 % spectrumNode2 = newNode('spectrum', 'Spectrum2', [0.2 0.2 0.15 0.15], @selectObject)
 %TestNode = newNode('in','Test Node',[0.55 0.55 0.15 0.15], @selectObject);
-button = newButton([0.9 0.05 .06 .10], @selectObject);
+
 selectedObject = [];
 button = newButton([0.9 0.05 .06 .10], @selectObject);
 
@@ -177,7 +177,9 @@ nodeObject = [];
                 % parameters
                 for i = 1:length(Interactables)
                     if isa(Interactables{i}, 'EffectSelector')
+                        disp("Deleting")
                         delete(Interactables{i}.anno);
+                        delete(Interactables{i}.annoBG);
                         delete(Interactables{i}.text);
                         Interactables{i} = [];
                     end
@@ -210,6 +212,7 @@ nodeObject = [];
             for i = 1:length(Interactables)
                         if isa(Interactables{i}, 'EffectSelector')
                             delete(Interactables{i}.anno);
+                            delete(Interactables{i}.annoBG);
                             delete(Interactables{i}.text);
                             Interactables{i} = [];
                         end

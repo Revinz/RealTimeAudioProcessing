@@ -11,8 +11,14 @@ classdef ArduinoPID
         bnDown = false; %Is the button down or not
         
         % Button LED pins
-        LED1 = "A2";
-        LED2 = "A3";
+        LED1 = "D5";
+        LED2 = "D6";
+        LED_OFF_BRIGHTNESS = 0.2;
+        LED_ON_BRIGHTNESS = 1;
+        
+        
+        %Knob
+        knobPin = "A5";
     end
     
     % HOW TO ARDUINO IN MATLAB
@@ -37,8 +43,10 @@ classdef ArduinoPID
             
             %Setup pins
             obj.arduino.configurePin(obj.sensorPin, 'AnalogInput');
+            obj.arduino.configurePin(obj.knobPin, 'AnalogInput');
             obj.arduino.configurePin(obj.LED1, 'AnalogOutput');  
             obj.arduino.configurePin(obj.LED2, 'AnalogOutput');
+            
             
             catch
                 disp('Arduino NOT connected');
@@ -50,24 +58,26 @@ classdef ArduinoPID
             %use this one as Arduino's loop. (It is just being called in the
             %while loop in the Main.m)
             
+            %Turn on the LEDs at their 'off' brightness
+            writePWMDutyCycle(obj.arduino, obj.LED1, obj.LED_OFF_BRIGHTNESS);
+            writePWMDutyCycle(obj.arduino, obj.LED2, obj.LED_OFF_BRIGHTNESS);
+            
             %Read Sensor
             SensorVal = obj.arduino.readVoltage("A1") * (1024 / 5); %Read and convert it into a scale from 0 - 1024
-            disp(SensorVal)
-            disp(obj.bnDown)
+            %disp(SensorVal)
+            
             %Hysterisis on the sensor value
             if (SensorVal >= obj.hysON && obj.bnDown == false)
                 obj.bnDown = true;
                 obj.ClearAll();
             elseif (SensorVal <= obj.hysOFF && obj.bnDown == true)
                 obj.bnDown = false;
-                writeDigitalPin(obj.arduino, 'A2', 0);
-                writeDigitalPin(obj.arduino, 'A3', 0);
                 disp("RELEASED")
             end
             
             
             %Read knob value and adjust volume
-            
+            obj.AdjustVolume();
         end
         
         % PLEASE keep the functionality inside methods
@@ -75,58 +85,47 @@ classdef ArduinoPID
         function ClearAll(obj)
             global Interactables
             disp("CLICKED")
-            writeDigitalPin(obj.arduino, 'A2', 1);
-            writeDigitalPin(obj.arduino, 'A3', 1);
-            
-            
-            for i = 1 : length(Interactables)
-                
-                if isa(Interactables{i}, 'Node')
-                    if ~isa(Interactables{i}, 'InputNode') && ~isa(Interactables{i}, 'OutputNode')
-                       if Interactables{i}.settingsOpened == false
-                            Interactables{i}.openSettings();
-                            Interactables{i}.pressDelete();
-                       else 
-                           Interactables{i}.pressDelete();
-                       end
+                 
+            % Delete all effect nodes on the UI
+            index = 1;
+            while index <= length(Interactables)
+                    if isa(Interactables{index}, 'Node')
+                        if ~isa(Interactables{index}, 'InputNode') && ~isa(Interactables{index}, 'OutputNode')
+                            
+                            %Turn on the LED's on the first node to be
+                            %deleted has been found
+                            writePWMDutyCycle(obj.arduino, obj.LED1, obj.LED_ON_BRIGHTNESS);
+                            writePWMDutyCycle(obj.arduino, obj.LED2, obj.LED_ON_BRIGHTNESS);
+                           
+                            %Delete the node
+                           if Interactables{index}.settingsOpened == false %Open the settings first to delete the node
+                                Interactables{index}.openSettings();
+                                Interactables{index}.pressDelete();
+                           else 
+                               Interactables{index}.pressDelete();
+                           end
+                           index = 1; %Recheck since the cell array list gets updated and reduced in size. Also prevents out-of-index error.
+                        end
                     end
-                end
-                
+                    
+                    index = index + 1; %Check the next object
             end
             
-%                    writeDigitalPin(a, 'A3', 1);
-%                    for j = 1:length(Interactables)
-%                        if isa(Interactables{j}, 'FlangerNode') || isa(Interactables{j}, 'LowpassNode') || isa(Interactables{j}, 'DelayNode') || isa(Interactables{j}, 'ReverbNode') || isa(Interactables{j}, 'SpectrumNode')  %Only want to check through nodes, since only nodes have delete buttons in them
-%                                if ishandle(Interactables{j}.anno) %Check if the annotion for the delete button exists
-%                                      if Interactables{j}.settingsOpened == false                               
-%                                          Interactables{j}.openSettings();
-%                                      end
-%                                      try
-%                                          Interactables{j}.pressDelete();
-%                                      catch
-%                                      end
-%                                      break;
-%                                end
-%                        end
-%                    end
+            %Lower the brightness of the LEDs again.
+            writePWMDutyCycle(obj.arduino, obj.LED1, obj.LED_OFF_BRIGHTNESS);
+            writePWMDutyCycle(obj.arduino, obj.LED2, obj.LED_OFF_BRIGHTNESS);
+
 
         end
         
         function AdjustVolume(obj)
             global output;
-            analogKnob = readVoltage(a,'A5');
-            output.volume = analogKnob - 4;
+            analogKnob = readVoltage(obj.arduino,obj.knobPin);
+            disp(analogKnob)
+            output.volume = analogKnob / 5;
              
         end
         
-        % Methods used for the example -- Can be deleted.
-        function turnOnLED(obj)
-            obj.arduino.writeDigitalPin(obj.ledPin, 1);
-        end
-        
-        function turnOffLED(obj)
-            obj.arduino.writeDigitalPin(obj.ledPin, 0);
-        end
     end
 end
 

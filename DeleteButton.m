@@ -43,9 +43,6 @@ classdef DeleteButton < Interactable
                     delete(node.inSocket);
                     delete(node.outSocket);
                     delete(node);
-                    node.inSocket.disconnectLine();
-                    node.outSocket.disconnectLine();
-
                            
         end
         
