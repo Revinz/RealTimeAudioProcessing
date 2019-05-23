@@ -8,7 +8,7 @@ allSettings = {};
 global Interactables; % The list of all interactables
 Interactables = {};
 global frameLength;
-frameMultiplier = 6;
+frameMultiplier = 4;
 frameLength = 1024 * frameMultiplier;
 global Fs;
 Fs = 44100;
