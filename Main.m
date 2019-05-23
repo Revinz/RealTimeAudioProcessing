@@ -8,7 +8,7 @@ allSettings = {};
 global Interactables; % The list of all interactables
 Interactables = {};
 global frameLength;
-frameMultiplier = 4;
+frameMultiplier = 6;
 frameLength = 1024 * frameMultiplier;
 global Fs;
 Fs = 44100;
@@ -81,18 +81,6 @@ while true
     
    updateConnectionPath(input);
    input.retrieveBuffer();
-   
-   %Functionality to register when the mouse button has been held down for x
-   %amount of time
-   if (timerStarted == true)
-
-        elapsedTime = toc; %Get the elapsed time
-
-        if (elapsedTime >= holdTime)
-            holdObject();
-            timerStarted = false;            
-        end
-   end
    
     if ~isempty(a.arduino)
      a = a.loop(); %Seems like the Arduino runs in parallel

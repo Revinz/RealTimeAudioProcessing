@@ -76,15 +76,20 @@ classdef OutSocket < ConnectionSocket
         function disconnectLine(obj)
                 disp('DISCONNECT')
                 delete(obj.connectionLine);
+                try
                 obj.connectionLine = [];   
-                
+                catch
+                end
                 if isa(obj.nextNode, 'SpectrumNode')
                     obj.nextNode.hideSpectrum();
                 end
                 
+                try
                 
                 obj.nextNode.inSocket.connectionLine = [];
                 obj.nextNode = [];
+                catch
+                end
         end
         
 

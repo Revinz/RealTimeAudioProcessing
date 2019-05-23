@@ -39,10 +39,13 @@ classdef InSocket < ConnectionSocket
         end
         
         function disconnectLine(obj)
+            try
                 delete(obj.connectionLine);
                 obj.connectionLine = [];
                 obj.prevNode.outSocket.nextNode = [];
                 obj.prevNode.outSocket.connectionLine = [];
+            catch
+            end
                
                 
                 if isa(obj.node, 'SpectrumNode')
