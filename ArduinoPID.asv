@@ -82,13 +82,8 @@ classdef ArduinoPID
             for i = 1 : length(Interactables)
                 
                 if isa(Interactables{i}, 'Node')
-                    if ~isa(Interactables{i}, 'InputNode') && ~isa(Interactables{i}, 'OutputNode')
-                       if Interactables{i}.settingsOpened == false
-                            Interactables{i}.openSettings();
-                            Interactables{i}.pressDelete();
-                       else 
-                           Interactables{i}.pressDelete();
-                       end
+                    if ~isa(Interactables{i}, 'InputNode' || )
+                    
                     end
                 end
                 

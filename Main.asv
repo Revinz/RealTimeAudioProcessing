@@ -94,12 +94,38 @@ while true
         end
    end
    
-    if ~isempty(a.arduino)
-     a = a.loop(); %Seems like the Arduino runs in parallel
-    end
+%    if ~isempty(a.arduino)
+%     a.loop(); %Seems like the Arduino runs in parallel
+%    end
    
    drawnow();
-
+       analogButton = readVoltage(a,'A1') * (1023 / 5);
+       analogKnob = readVoltage(a,'A5');
+%        disp(analogKnob);
+       if analogButton > 200
+           writeDigitalPin(a, 'A3', 1);
+           for j = 1:length(Interactables)
+               if isa(Interactables{j}, 'FlangerNode') || isa(Interactables{j}, 'LowpassNode') || isa(Interactables{j}, 'DelayNode') || isa(Interactables{j}, 'ReverbNode') || isa(Interactables{j}, 'SpectrumNode')  %Only want to check through nodes, since only nodes have delete buttons in them
+                       if ishandle(Interactables{j}.anno) %Check if the annotion for the delete button exists
+                             if Interactables{j}.settingsOpened == false                               
+                                 Interactables{j}.openSettings();
+                             end
+                             try
+                                 Interactables{j}.pressDelete();
+                             catch
+                             end
+                             break;
+                       end
+               end
+           end
+       else
+           writeDigitalPin(a, 'A3', 0);
+       end
+       
+       output.volume = analogKnob - 4;
+%        frameLength = 1000 * analogKnob;
+%        disp(output.volume);
+%        pause(0.5);
 end
 
 
